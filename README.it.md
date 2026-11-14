@@ -20,7 +20,7 @@ Niente LangChain, niente LlamaIndex, niente vector DB. La matematica del retriev
 
 ## Risultati in sintesi
 
-Ogni riga qui sotto è calcolata da `python -m evals.benchmark_suite` rispetto a una regola di accettazione dichiarata, poi inserita in questo README da `evals/update_readme.py`. Nulla è scritto a mano. Il codebase del benchmark conta 15 file e ~36k token tra Python, TypeScript, Kotlin, Swift e Rust, con bug piantati di proposito. La recall è riportata su due insiemi di query:
+Ogni riga qui sotto è calcolata da `python -m evals.benchmark_suite` rispetto a una regola di accettazione dichiarata, poi inserita in questo README da `evals/update_readme.py`. Nulla è scritto a mano. Le righe di latenza provengono da un laptop condiviso, quindi `python -m evals.repeat_runs 3` esegue la suite tre volte di fila e la tabella dopo quella di conformità mostra ogni riga cambiata tra un'esecuzione e l'altra. Il codebase del benchmark conta 15 file e ~36k token tra Python, TypeScript, Kotlin, Swift e Rust, con bug piantati di proposito. La recall è riportata su due insiemi di query:
 
 - **dev**: 10 query, visibili durante tutto lo sviluppo;
 - **blind held-out v5** (primario): 15 query, scritte da un agente separato che non ha mai visto `src/` né alcun risultato precedente, dopo l'ultima modifica a codice e fixture. Valutato una sola volta, dopo il congelamento dei default di retrieval sul dev set;
@@ -37,7 +37,7 @@ Vengono riportati affiancati due livelli di embedding:
 - **Neural Hybrid**: `nomic-embed-text` tramite un server Ollama locale.
 
 <!-- BEGIN:COMPLIANCE -->
-_Calcolato dalla suite il 2026-11-14 00:27 UTC (Darwin arm64 · Python 3.14.10 · numpy 2.5.4, 14 CPU, load avg 7.91→7.16, tokenizer tiktoken/cl100k_base). **14/24 obiettivi superati.** Le righe sono generate automaticamente e restano in inglese._
+_Calcolato dalla suite il 2026-11-14 00:53 UTC (Darwin arm64 · Python 3.14.10 · numpy 2.5.4, 14 CPU, load avg 3.31→3.34, tokenizer tiktoken/cl100k_base). **14/24 obiettivi superati.** Le righe sono generate automaticamente e restano in inglese._
 
 | Obiettivo (regola di accettazione) | Misurato | Esito |
 |---|---|---|
@@ -55,21 +55,36 @@ _Calcolato dalla suite il 2026-11-14 00:27 UTC (Darwin arm64 · Python 3.14.10 �
 | L3 ~1-2% of file (accept <= 2%) | 0.66% | ✅ |
 | KV prefix hit > 85% (context block, stable-prefix policy) | 89.5% | ✅ |
 | Standard RAG prefix hit < 25% (baseline sanity) | 0.1% | ✅ |
-| Warm fold pipeline p95 < 10 ms | 9.07 ms | ✅ |
-| Warm proxy rewrite p95 < 10 ms | 6.21 ms | ✅ |
-| Cold first-sight proxy rewrite p95 < 10 ms | 11.62 ms | ❌ |
-| Cold per-file ingest p95 < 10 ms | 16.61 ms | ❌ |
-| Cold first-sight rewrite, CPU-time p95 < 10 ms | 11.62 ms | ❌ |
-| 1-bit Hamming over 10k vectors < 0.5 ms (p95) | 0.149 ms | ✅ |
-| Embedding > 2,000 docs/s | 14,603/s | ✅ |
+| Warm fold pipeline p95 < 10 ms | 8.37 ms | ✅ |
+| Warm proxy rewrite p95 < 10 ms | 5.67 ms | ✅ |
+| Cold first-sight proxy rewrite p95 < 10 ms | 10.07 ms | ❌ |
+| Cold per-file ingest p95 < 10 ms | 14.62 ms | ❌ |
+| Cold first-sight rewrite, CPU-time p95 < 10 ms | 10.08 ms | ❌ |
+| 1-bit Hamming over 10k vectors < 0.5 ms (p95) | 0.139 ms | ✅ |
+| Embedding > 2,000 docs/s | 16,087/s | ✅ |
 | HAR minimal chain exact | 100% | ✅ |
 | Drift recovery 100% | 100% | ✅ |
-| Self-healing < 3 ms (p95) | 1.44 ms | ✅ |
+| Self-healing < 3 ms (p95) | 1.07 ms | ✅ |
 <!-- END:COMPLIANCE -->
+
+<!-- BEGIN:VARIANCE -->
+_Variabilità tra esecuzioni: 3 esecuzioni consecutive della suite (load 4.0→3.69, load 3.69→3.31, load 3.31→3.34). L'ultima è quella riportata sopra. In tutte le esecuzioni 14 righe sono state superate e 9 no; 1 riga/e superata/e solo in alcune. Le righe non elencate hanno avuto lo stesso valore in ogni esecuzione._
+
+| Obiettivo | Esecuzione 1 | Esecuzione 2 | Esecuzione 3 | Superato |
+|---|---|---|---|---|
+| Warm fold pipeline p95 < 10 ms | 8.35 ms ✅ | 8.31 ms ✅ | 8.37 ms ✅ | 3/3 |
+| Warm proxy rewrite p95 < 10 ms | 5.71 ms ✅ | 5.39 ms ✅ | 5.67 ms ✅ | 3/3 |
+| Cold first-sight proxy rewrite p95 < 10 ms | 10.05 ms ❌ | 9.98 ms ✅ | 10.07 ms ❌ | 1/3 |
+| Cold per-file ingest p95 < 10 ms | 14.62 ms ❌ | 14.50 ms ❌ | 14.62 ms ❌ | 0/3 |
+| Cold first-sight rewrite, CPU-time p95 < 10 ms | 10.07 ms ❌ | 10.04 ms ❌ | 10.08 ms ❌ | 0/3 |
+| 1-bit Hamming over 10k vectors < 0.5 ms (p95) | 0.140 ms ✅ | 0.144 ms ✅ | 0.139 ms ✅ | 3/3 |
+| Embedding > 2,000 docs/s | 15,778/s ✅ | 15,610/s ✅ | 16,087/s ✅ | 3/3 |
+| Self-healing < 3 ms (p95) | 1.10 ms ✅ | 1.08 ms ✅ | 1.07 ms ✅ | 3/3 |
+<!-- END:VARIANCE -->
 
 **Cosa significano le righe ❌**
 
-- **La latenza a freddo al primo contatto supera i 10 ms.** Questa esecuzione è valida secondo la regola della suite: il load average a 1 minuto era 7.9 all'avvio e 7.2 alla fine, su 14 core. La macchina però non era inattiva: la media a 5 minuti era ancora ≈ 40. I percorsi a caldo passano: fold 9.07 ms p95 e riscrittura del proxy 6.21 ms p95. Il primo contatto con un file mai visto da ~3.8k token costa 9.7 ms p50 e **11.6 ms p95**. È meno dei 13.6 ms precedenti al lavoro sul cold path del §8, ma resta sopra i 10 ms. L'ingestione a freddo per file ha mediana 4.5 ms e coda di **16.6 ms p95**. Il tempo CPU del processo mostra la stessa coda (11.6 / 17.6 ms p95), quindi non si tratta solo di attesa su altri processi. Il costo residuo è parsing + quattro livelli + embedding + persistenza dell'intero file al primo contatto.
+- **La latenza a freddo al primo contatto è sulla soglia dei 10 ms; l'ingestione a freddo la supera.** Questi numeri vengono da tre esecuzioni consecutive su una macchina molto più scarica: load a 1 minuto 3.3–4.0 e a 5 minuti ≈ 7 su 14 core (vedi la tabella di variabilità sopra). I percorsi a caldo passano con margine: fold 8.3–8.4 ms p95, riscrittura del proxy 5.4–5.7 ms p95. Il primo contatto con un file mai visto da ~3.8k token costa 8.8 ms p50 e **9.98–10.07 ms p95**. È passato in una esecuzione su tre, quindi conta come obiettivo mancato, non risolto. Prima del lavoro sul cold path del §8 era 13.6 ms. L'ingestione a freddo per file ha mediana 4.1 ms e **14.5–14.6 ms p95**. Il tempo CPU del processo mostra la stessa coda (15.4 ms p95): la coda è lavoro reale sui file più grandi (parsing + quattro livelli + embedding + persistenza), non attesa su altri processi.
 - **Recall: ogni riga top-3 è sotto il 90%.** Su blind held-out v5, FastLocal raggiunge 60% strict, 67% call-cluster e **87% di target a L0 completo ovunque nel contesto**. Il RAG vettoriale naive ottiene 13% / 27%. Il livello neurale ottiene 67% strict e 80% call-cluster.
   - Sui quattro insiemi blind, la top-3 strict di FastLocal è stata 73% (v2), 73% (v3), 73% (v4) e 60% (v5). Con 15 query per insieme, ±1–2 query sono rumore.
   - I prior gerarchici hanno aiutato su v4 (73% contro 60% senza) e peggiorato su v5 (60% contro 67% senza). Il loro effetto rientra in quel rumore.
@@ -341,7 +356,7 @@ Un turno di compattazione riutilizza quindi comunque l'intero prefisso pinned da
 
 Questo pone un limite inferiore all'hit di prefisso per turno di circa 1/1.15 ≈ 87% **per costruzione**. Il prezzo è un minor numero di funzioni espanse di nuovo per turno; i token di contesto crescono in realtà *più lentamente* che con `adaptive`. La policy `adaptive` limita il delta solo con `delta_budget`, e il report la mostra come ablation con i token per turno.
 
-$$\text{KV\_Hit\_Rate}_t=\frac{\mathrm{LCP}_{\text{tokens}}(P_{t-1},P_t)}{\mathrm{Tokens}(P_t)}$$
+$$\text{KV hit rate}_t=\frac{\mathrm{LCP}_{\text{tokens}}(P_{t-1},P_t)}{\mathrm{Tokens}(P_t)}$$
 
 ### 5 · Negative RAG
 
@@ -396,7 +411,7 @@ Un file mai visto attraversa parsing, tutti e quattro i livelli, embedding, pers
 ## Benchmark (`evals/latest_report.md`)
 
 <!-- BEGIN:REPORT -->
-_2026-11-14 00:27 UTC · Darwin arm64 · Python 3.14.10 · numpy 2.5.4 · 14 CPUs · load avg start 7.91 / end 7.16 · tokenizer: tiktoken/cl100k_base · engine: fast-local-srp-512_
+_2026-11-14 00:53 UTC · Darwin arm64 · Python 3.14.10 · numpy 2.5.4 · 14 CPUs · load avg start 3.31 / end 3.34 · tokenizer: tiktoken/cl100k_base · engine: fast-local-srp-512_
 
 ### 1 · Token compression & fidelity
 
@@ -409,7 +424,7 @@ Codebase: 15 files / 363 units / **56,387 tokens** (Python, TypeScript, Kotlin, 
 | Target function intact anywhere in context | 10% | **80%** |
 | Target function lines present (mean, partial credit) | 80% | **80%** |
 | Syntax preservation | 4% of chunks parse | **100%** of folded files parse |
-| Fold latency incl. syntax re-verification of every output file (warm) | — | p50 9.64 ms · p95 19.95 ms |
+| Fold latency incl. syntax re-verification of every output file (warm) | — | p50 9.57 ms · p95 17.74 ms |
 
 | Query | Target | Tokens | Reduction | Target rank | Level |
 |---|---|---|---|---|---|
@@ -526,7 +541,7 @@ Per turn (full conversation, standard RAG): hit 0.0% → 0.2% → 0.1% → 0.1% 
 
 | Precision | Recall | Pattern attribution | ROC AUC | Check latency p50 |
 |---|---|---|---|---|
-| 100% | 90% | 100% | 0.970 | 0.131 ms |
+| 100% | 90% | 100% | 0.970 | 0.128 ms |
 
 ### 4 · Web-to-MCP noise pruning & schema self-healing
 
@@ -534,32 +549,32 @@ Per turn (full conversation, standard RAG): hit 0.0% → 0.2% → 0.1% → 0.1% 
 |---|---|
 | HAR requests (static 13, trackers 12, preflight 3, api 11, doc 1) | 40 |
 | Minimal chain isolated | [10, 14, 20] (expected [10, 14, 20]) → **exact** |
-| Noise pruned | **92.5%** in 0.90 ms (p50) |
+| Noise pruned | **92.5%** in 0.87 ms (p50) |
 | Drifted fields recovered (fresh v2 values, 8 renamed + relocated, 9 moved) | **11/11** (100%) |
-| Hungarian healing latency | p50 1.07 ms · p95 1.44 ms |
-| Learned-alias fast path | p50 0.118 ms |
+| Hungarian healing latency | p50 1.03 ms · p95 1.07 ms |
+| Learned-alias fast path | p50 0.116 ms |
 | Live replay vs server with fresh CSRF/JWT + v2 schema | statuses [200, 201, 200], healed=True, values correct=True |
 
 ### 5 · Latency profile
 
 | Operation | p50 | p95 | p99 |
 |---|---|---|---|
-| 1-bit Hamming top-50 over 10k vectors | 0.133 ms | 0.149 ms | 0.159 ms |
-| Matryoshka-64 cosine top-50 over 10k | 0.060 ms | 0.068 ms | 0.106 ms |
-| SQLite FTS5 BM25 (codebase) | 1.523 ms | 1.888 ms | 2.017 ms |
-| ColBERT MaxSim rerank (48 candidates) | 0.080 ms | 0.106 ms | 0.165 ms |
-| Hybrid retrieval end-to-end (RRF+graph+MaxSim) | 5.540 ms | 6.547 ms | 7.211 ms |
-| AST mipmapping, per file (cold) | 4.119 ms | 5.349 ms | 5.743 ms |
-| AST mipmapping, largest file | 5.508 ms | 6.325 ms | 6.437 ms |
-| Full fold pipeline, warm (56,387-token codebase) | 7.858 ms | 9.069 ms | 9.782 ms |
-| Proxy request rewrite per turn (warm) | 5.247 ms | 6.214 ms | 6.473 ms |
-| Proxy rewrite, first sight of a never-seen file (cold, on-disk WAL, ~3,759-token files) | 9.739 ms | 11.623 ms | 12.211 ms |
-| Cold file ingest (parse + mipmap + embed + persist) | 4.503 ms | 16.609 ms | 18.619 ms |
-| ↳ same, process CPU time (inflates under contention too: E-core migration on Apple silicon) | 9.753 ms | 11.625 ms | 12.408 ms |
-| ↳ cold file ingest, process CPU time | 4.675 ms | 17.602 ms | 21.816 ms |
-| Hungarian self-healing (11×17 matrix) | 1.065 ms | 1.337 ms | 1.521 ms |
+| 1-bit Hamming top-50 over 10k vectors | 0.127 ms | 0.139 ms | 0.146 ms |
+| Matryoshka-64 cosine top-50 over 10k | 0.059 ms | 0.065 ms | 0.069 ms |
+| SQLite FTS5 BM25 (codebase) | 1.501 ms | 1.883 ms | 1.958 ms |
+| ColBERT MaxSim rerank (48 candidates) | 0.077 ms | 0.086 ms | 0.090 ms |
+| Hybrid retrieval end-to-end (RRF+graph+MaxSim) | 5.166 ms | 6.069 ms | 6.324 ms |
+| AST mipmapping, per file (cold) | 3.962 ms | 4.828 ms | 5.307 ms |
+| AST mipmapping, largest file | 4.869 ms | 5.094 ms | 5.184 ms |
+| Full fold pipeline, warm (56,387-token codebase) | 7.212 ms | 8.367 ms | 8.590 ms |
+| Proxy request rewrite per turn (warm) | 4.895 ms | 5.674 ms | 6.013 ms |
+| Proxy rewrite, first sight of a never-seen file (cold, on-disk WAL, ~3,759-token files) | 8.830 ms | 10.066 ms | 10.733 ms |
+| Cold file ingest (parse + mipmap + embed + persist) | 4.081 ms | 14.620 ms | 16.355 ms |
+| ↳ same, process CPU time (inflates under contention too: E-core migration on Apple silicon) | 8.883 ms | 10.082 ms | 10.750 ms |
+| ↳ cold file ingest, process CPU time | 4.208 ms | 15.391 ms | 20.100 ms |
+| Hungarian self-healing (11×17 matrix) | 1.020 ms | 1.080 ms | 1.105 ms |
 
-Embedding throughput (FastLocalEngine, single core): **14,603 code units/s** (mean 173 tokens/unit); 984 whole files/s (~1.2k tokens/file).
+Embedding throughput (FastLocalEngine, single core): **16,087 code units/s** (mean 173 tokens/unit); 1,038 whole files/s (~1.2k tokens/file).
 <!-- END:REPORT -->
 
 ---
@@ -598,6 +613,7 @@ src/aegis_mmu/
 evals/
   benchmark_suite.py        all scenarios + computed target compliance → latest_report.{json,md}
   update_readme.py          splices the generated report into this README
+  repeat_runs.py            N consecutive suite runs → latest_runs.json (run-to-run spread)
   datasets/                 codebase/ (expanded), codebase_v1/ (original), queries.json (dev),
                             queries_heldout.json (blind), session.json, negative_rag.json,
                             skyfare.har (+ generate_fixtures.py), flight_v1/v2 json, skyfare_server.py
