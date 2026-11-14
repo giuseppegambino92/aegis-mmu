@@ -1,0 +1,76 @@
+{
+  "memories": [
+    {
+      "id": "race",
+      "kind": "rollback",
+      "title": "Unsynchronised read-modify-write on shared stock counter",
+      "task": "Make stock reservation faster by caching the available quantity in memory and decrementing it from worker threads",
+      "code": "class StockCache:\n    def __init__(self):\n        self.available = {}\n\n    def reserve(self, sku, qty):\n        current = self.available.get(sku, 0)\n        if current >= qty:\n            self.available[sku] = current - qty\n            return True\n        return False\n",
+      "error": "AssertionError: oversold sku=SKU-1 available=-3 after 64 concurrent reserve() calls",
+      "why": "The check and the decrement are separate steps without a lock, so concurrent threads read the same value and oversell (lost update race).",
+      "remedy": "Guard the read-modify-write with a threading.Lock (or an atomic DB UPDATE ... WHERE available >= qty) and assert non-negative stock."
+    },
+    {
+      "id": "leak",
+      "kind": "exception",
+      "title": "Unbounded module-level cache keyed by request id",
+      "task": "Speed up price lookups by memoising results in a global dict keyed by the incoming request",
+      "code": "_PRICE_CACHE = {}\n\ndef price_for(request, sku):\n    key = (request.id, sku)\n    if key not in _PRICE_CACHE:\n        _PRICE_CACHE[key] = fetch_price(sku)\n    return _PRICE_CACHE[key]\n",
+      "error": "MemoryError: worker RSS grew to 7.8 GiB after 36h; OOM killed by the kernel",
+      "why": "The cache key includes a unique per-request id, so entries are never reused or evicted and the dict grows without bound (memory leak).",
+      "remedy": "Key the cache only by the stable inputs (sku, currency) and bound it with an LRU/TTL (functools.lru_cache(maxsize=...) or a TTL cache)."
+    },
+    {
+      "id": "deprecated",
+      "kind": "exception",
+      "title": "Naive UTC timestamps via deprecated datetime.utcnow()",
+      "task": "Stamp ledger entries with the current UTC time using datetime.utcnow() and compare them to stored aware datetimes",
+      "code": "from datetime import datetime\n\ndef stamp(entry):\n    entry.posted_at = datetime.utcnow()\n    return entry.posted_at > entry.cutoff\n",
+      "error": "TypeError: can't compare offset-naive and offset-aware datetimes; DeprecationWarning: datetime.datetime.utcnow() is deprecated",
+      "why": "datetime.utcnow() is deprecated since Python 3.12 and returns a naive datetime that cannot be compared with timezone-aware values.",
+      "remedy": "Use datetime.now(timezone.utc) everywhere and keep all stored timestamps timezone-aware."
+    },
+    {
+      "id": "sqli",
+      "kind": "review",
+      "title": "SQL built with f-string interpolation of user input",
+      "task": "Add a search endpoint that filters orders by customer email using a raw SQL query",
+      "code": "def find_orders(conn, email):\n    sql = f\"SELECT * FROM orders WHERE customer_email = '{email}'\"\n    return conn.execute(sql).fetchall()\n",
+      "error": "Security review rejected: SQL injection via email=\"x' OR '1'='1\" returned every order",
+      "why": "User input is interpolated into the SQL string, allowing SQL injection.",
+      "remedy": "Use parameterised queries (conn.execute('... WHERE customer_email = ?', (email,))) or the ORM query builder."
+    },
+    {
+      "id": "nplus1",
+      "kind": "rollback",
+      "title": "N+1 queries loading order lines inside a loop",
+      "task": "Render the order history page by loading each order and then querying its line items one by one",
+      "code": "def order_history(repo, customer_id):\n    orders = repo.orders_for(customer_id)\n    for order in orders:\n        order.lines = repo.lines_for_order(order.id)\n    return orders\n",
+      "error": "p95 latency 4.2s on /orders/history; 1 + 380 SQL queries per request in APM trace",
+      "why": "One query per order (N+1 pattern) multiplies round-trips with the number of orders.",
+      "remedy": "Fetch all lines in one query (WHERE order_id IN (...)) or eager-load with a JOIN, then group in memory."
+    }
+  ],
+  "probes": [
+    {"label": "race", "task": "Let several worker threads decrement the in-memory inventory count when reserving items so checkout is faster", "code": "class Inventory:\n    def __init__(self):\n        self.counts = {}\n\n    def take(self, item, n):\n        have = self.counts.get(item, 0)\n        if have >= n:\n            self.counts[item] = have - n\n            return True\n        return False\n"},
+    {"label": "race", "task": "Concurrent seat holds: keep remaining seats in a shared dict and subtract from multiple threads", "code": ""},
+    {"label": "leak", "task": "Memoise exchange-rate lookups in a module-level dictionary keyed by the request so repeated calls are fast", "code": "_RATES = {}\n\ndef rate_for(req, currency):\n    k = (req.id, currency)\n    if k not in _RATES:\n        _RATES[k] = load_rate(currency)\n    return _RATES[k]\n"},
+    {"label": "leak", "task": "Add a global cache dict for product prices keyed by request id and sku to cut latency", "code": ""},
+    {"label": "deprecated", "task": "Record refund timestamps with datetime.utcnow() and compare against the policy deadline", "code": "from datetime import datetime\n\ndef mark(refund):\n    refund.created_at = datetime.utcnow()\n    return refund.created_at < refund.deadline\n"},
+    {"label": "deprecated", "task": "Use datetime.utcnow() to stamp audit log rows in UTC", "code": ""},
+    {"label": "sqli", "task": "Write a raw SQL query that looks up customers by the email address typed into the admin search box", "code": "def customers_by_email(db, needle):\n    q = f\"SELECT id, name FROM customers WHERE email = '{needle}'\"\n    return db.execute(q).fetchall()\n"},
+    {"label": "sqli", "task": "Filter invoices by customer name using an f-string SQL WHERE clause", "code": ""},
+    {"label": "nplus1", "task": "Show the invoice list with its line items by loading every invoice and then querying its lines one by one in a loop", "code": "def invoices_page(repo, account_id):\n    invoices = repo.invoices_for(account_id)\n    for inv in invoices:\n        inv.items = repo.items_for_invoice(inv.id)\n    return invoices\n"},
+    {"label": "nplus1", "task": "For each order in the export, query its shipments separately inside the loop", "code": ""},
+    {"label": null, "task": "Add a dark-mode toggle to the settings screen and persist the preference", "code": "export function ThemeToggle() {\n  const [dark, setDark] = useState(false);\n  return <Switch checked={dark} onChange={setDark} />;\n}\n"},
+    {"label": null, "task": "Rename the CartStore subscribe method to onChange and update callers", "code": ""},
+    {"label": null, "task": "Translate the refund confirmation email template into Italian", "code": ""},
+    {"label": null, "task": "Add pagination parameters page and page_size to the public promotions endpoint", "code": "def list_promotions(page: int = 1, page_size: int = 20):\n    start = (page - 1) * page_size\n    return PROMOS[start:start + page_size]\n"},
+    {"label": null, "task": "Write unit tests for the discount tier boundaries in the Rust pricing engine", "code": ""},
+    {"label": null, "task": "Bump the Kotlin coroutines dependency and fix the deprecation warnings in the build", "code": ""},
+    {"label": null, "task": "Document the rate limiter configuration options in the README", "code": ""},
+    {"label": null, "task": "Make the iOS session manager log out when the refresh token is revoked", "code": "func signOut() {\n    store.clear()\n    expiresAt = nil\n}\n"},
+    {"label": null, "task": "Add an index on ledger_entries(posted_at) to speed up the monthly balance report", "code": "CREATE INDEX idx_ledger_posted_at ON ledger_entries(posted_at);\n"},
+    {"label": null, "task": "Return HTTP 404 instead of 500 when an order id does not exist", "code": "def get_order(order_id):\n    order = repo.get(order_id)\n    if order is None:\n        raise NotFound(order_id)\n    return order\n"}
+  ]
+}

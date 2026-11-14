@@ -1,0 +1,92 @@
+[
+  {
+    "id": "h5_01",
+    "query": "The settlement report job fails with CurrencyMismatch: 'item 0 is in EUR, expected EUR' for merchants whose settlement currency is stored in lower case ('eur') in their config. Merchants configured with upper-case codes are fine.",
+    "target": {"path": "ledgerline/payments/currency.py", "symbol": "sum_money"},
+    "bug": "Each item's currency is compared against the raw `currency` argument instead of the normalised `total.currency`, so a lower-case or padded currency code rejects every item even though Money.zero upper-cased it."
+  },
+  {
+    "id": "h5_02",
+    "query": "Monthly merchant statements are missing backdated corrections: a March settlement correction posted in early April (with posted_at in March) never shows up on the March statement, and the statement's closing balance doesn't match the balance as of month end.",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger._entries_between"},
+    "bug": "The journal snapshot is iterated in append order instead of sorted by posted_at, so the early `break` on the first entry at or after `end` drops any backdated entries appended after it."
+  },
+  {
+    "id": "h5_03",
+    "query": "Customers refunded for a parcel that never arrived get their items back but not the shipping they paid. Damaged-goods refunds include shipping as expected, and consumer law requires it in both cases.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundPolicy.refunds_shipping"},
+    "bug": "Returns `reason is RefundReason.DAMAGED` instead of `reason is not RefundReason.CUSTOMER_REQUEST`, so NOT_DELIVERED refunds no longer include outbound shipping."
+  },
+  {
+    "id": "h5_04",
+    "query": "The cache dashboard shows a hit rate well below what we get by dividing hits by hits plus misses from the same stats object, and the gap is biggest for namespaces with short TTLs. The hit and miss counters themselves look correct.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "CacheStats.hit_rate"},
+    "bug": "The denominator adds `expirations` to hits + misses, but expired lookups are already counted as misses, so they are double-counted and the hit rate is under-reported."
+  },
+  {
+    "id": "h5_05",
+    "query": "CSV export download links in the merchant dashboard fail with 401 'signature mismatch' for roughly half of exports, while the same token works in an Authorization header. The failing links have a '+' in the token, which shows up as a space in the access log.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "_b64encode"},
+    "bug": "Uses standard base64 (`base64.b64encode`) instead of base64url, so JWT segments and signatures can contain '+' and '/', which break when the token is embedded in a URL query string."
+  },
+  {
+    "id": "h5_06",
+    "query": "GET /v1/limits reports X-RateLimit-Remaining: 0 for integrations that can still make about 100 more read calls in the current window before getting a 429. The gap matches the burst allowance configured for the route class.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "RateLimiter.peek"},
+    "bug": "Remaining quota is computed from `rule.limit` instead of `rule.capacity` (limit + burst), so the informational endpoint under-reports by the burst headroom."
+  },
+  {
+    "id": "h5_07",
+    "query": "Available stock creeps upward during the day and we've oversold several SKUs. The logs are full of 'reserved count for ... lower than hold' warnings, and support tooling still lists holds for orders that were already cancelled or swept, as if giving back the same hold twice counts twice.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger.release"},
+    "bug": "The reservation is looked up with `dict.get` instead of `dict.pop`, so it is never removed; the call is no longer idempotent and each repeat decrements `reserved` again."
+  },
+  {
+    "id": "h5_08",
+    "query": "We never see StaleOrderVersion in the logs any more, but some orders that support cancelled at the same moment the capture webhook arrived are still 'paid' in the database, even though the cancel call returned success and the customer got the cancellation event.",
+    "target": {"path": "ledgerline/orders/repository.py", "symbol": "OrderRepository.update_status"},
+    "bug": "The optimistic-lock check is `cur.rowcount > 1` instead of `!= 1`, so an UPDATE that matched zero rows (version changed) is committed as success and a stale Order with the new status is returned."
+  },
+  {
+    "id": "h5_09",
+    "query": "B2B customers ordering exactly 10,000 units of one SKU get a 400 saying the quantity must be between 1 and 10000, while 9,999 goes through. The documented per-line maximum is 10,000 units.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "_validate_items"},
+    "bug": "The per-line quantity check uses `quantity < MAX_UNITS_PER_LINE` instead of `<=`, rejecting the documented inclusive maximum."
+  },
+  {
+    "id": "h5_10",
+    "query": "When customers hit Reply on the refund confirmation email, the reply is addressed to themselves instead of the merchant's support inbox. Order confirmation receipts reply to support correctly.",
+    "target": {"path": "ledgerline/notifications/email.py", "symbol": "RefundEmailComposer.render"},
+    "bug": "The OutboundEmail's reply_to is set to the validated recipient address instead of `self._support`."
+  },
+  {
+    "id": "h5_11",
+    "query": "Behind the CDN, which sends Retry-After as an HTTP date on 503s and 429s, the web app retries immediately and burns through all its attempts within a few milliseconds. When the origin sends Retry-After in seconds, the client waits as expected.",
+    "target": {"path": "web/src/api/client.ts", "symbol": "parseRetryAfter"},
+    "bug": "The HTTP-date branch computes `now - date` instead of `date - now`, so a future retry date yields 0 (retry now) and only past dates produce a delay."
+  },
+  {
+    "id": "h5_12",
+    "query": "When removing a coupon fails with a plain HTTP 500 during a backend incident, shoppers see raw internal error text in the cart instead of the friendly 'Could not remove the code.' message. 502 and 503 failures show the friendly text.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "describeError"},
+    "bug": "The server-error guard is `err.status > 500` instead of `>= 500`, so the internal message of a 500 response is shown to shoppers."
+  },
+  {
+    "id": "h5_13",
+    "query": "On flaky cellular connections the iOS app's token refresh gives up almost instantly: the log shows every retry attempt within about a millisecond, followed by 'refresh failed after 2 retries'. The retries are supposed to back off by half a second per attempt.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "SessionManager.performRefresh"},
+    "bug": "The backoff sleep multiplies the attempt by 500_000 nanoseconds (0.5 ms) instead of 500_000_000 (0.5 s), so network retries happen back to back."
+  },
+  {
+    "id": "h5_14",
+    "query": "A merchant created a coupon with a trailing space in the code ('SPRING25 ') and the dashboard accepted it, but every shopper entering SPRING25 at checkout gets 'unknown coupon code SPRING25' from the pricing engine. Coupons saved without stray whitespace work fine.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "DiscountEngine.new"},
+    "bug": "Coupon keys are normalised with `to_ascii_uppercase()` but no longer trimmed, while lookups trim the shopper's input, so configured codes with surrounding whitespace never match."
+  },
+  {
+    "id": "h5_15",
+    "query": "On Android checkout, tapping Retry on the 'You're offline' banner under the shipping options does nothing and the total never loads. The shopper has to pick a different shipping option to get a quote.",
+    "target": {"path": "android/app/src/main/java/com/ledgerline/checkout/CheckoutViewModel.kt", "symbol": "CheckoutViewModel.retry"},
+    "bug": "The shipping-step branch requires `current.quoteError == null` instead of `!= null`, so a retry after a failed quote is ignored and only re-quotes when there was no error."
+  }
+]

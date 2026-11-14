@@ -1,0 +1,92 @@
+[
+  {
+    "id": "h3_01",
+    "query": "Splitting a fee across parties by weight puts the leftover cent on the wrong side: $1.00 split 1:2 comes out as 0.34 USD / 0.66 USD instead of 0.33 / 0.67. Totals always reconcile, and even splits like 10.00 three ways (3.34/3.33/3.33) look right.",
+    "target": {"path": "ledgerline/payments/currency.py", "symbol": "Money.allocate"},
+    "bug": "The largest-remainder ordering sorts by fractional part ascending (key (exact-floor, i)) instead of descending, so leftover minor units go to the shares that lost the least to rounding."
+  },
+  {
+    "id": "h3_02",
+    "query": "When warehouse staff scan returned items one at a time in the dashboard (one row per unit), the refund only covers a single unit: scanning the same SKU three times refunds one unit's worth. Debug logs show 'merged 3 refund rows into 1 SKUs'; typing quantity 3 on a single row refunds correctly.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundCalculator._merge_requested"},
+    "bug": "Duplicate SKU rows overwrite each other (merged[sku] = quantity) instead of being summed (merged.get(sku, 0) + quantity), so only the last row's quantity is refunded."
+  },
+  {
+    "id": "h3_03",
+    "query": "A merchant whose onboarding config has the currency in lower case ('eur') shows 'opened ledger accounts for merchant m_8812 in EUR' in the logs, but their first capture fails with UnknownAccount: 'm_8812:EUR:clearing'. Merchants configured with 'EUR' work fine.",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "merchant_account_codes"},
+    "bug": "The currency code is only stripped, not upper-cased, before building the account prefix, so accounts opened with 'eur' are namespaced 'm:eur:*' while postings from Money (always upper case) look up 'm:EUR:*'."
+  },
+  {
+    "id": "h3_04",
+    "query": "Since memoized lookups moved to the shared Redis backend, cached functions that take a set of SKUs have a near-zero hit rate across the fleet: the same request on two API nodes produces different cache keys (pricing.bulk:a9c4af55... vs pricing.bulk:2647516a...). On a single node the cache hits as expected.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "_stable_repr"},
+    "bug": "Set/frozenset elements are joined in iteration order instead of being sorted, and string hashing is randomised per process, so the same set renders differently on each node."
+  },
+  {
+    "id": "h3_05",
+    "query": "Partners whose HTTP client sends the header as `authorization: bearer <token>` receive 401 'expected a Bearer token'. The exact same token sent as 'Bearer <token>' is accepted.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "TokenService.authorize"},
+    "bug": "The auth scheme is compared case-sensitively (scheme != \"Bearer\") instead of scheme.lower() != \"bearer\", rejecting valid lower-case schemes (RFC 7235 schemes are case-insensitive)."
+  },
+  {
+    "id": "h3_06",
+    "query": "Report exports are supposed to be capped at 10 per hour, but one tenant pulled about 400 settlement CSVs from GET /v1/reports/settlements/export in an hour without a single 429. Calls to /v1/reports/export itself are throttled after 10.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "classify_route"},
+    "bug": "The export check matches only segments[:2] == ['reports', 'export'] instead of segments[0] == 'reports' and segments[-1] == 'export', so nested export paths fall through to the generic reports.read class (api.read limits)."
+  },
+  {
+    "id": "h3_07",
+    "query": "Every time an order ships, the sellable count for its SKUs drops by twice the shipped quantity. The nightly inventory snapshot shows 'reserved' piling up on SKUs with no open holds, e.g. on_hand 7, reserved 3, available 4 after shipping 3 of 10.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger.commit"},
+    "bug": "Converting a hold into a shipment decrements on_hand but no longer decrements level.reserved, so shipped units stay counted as reserved forever."
+  },
+  {
+    "id": "h3_08",
+    "query": "If a cart contains a SKU with no price in the shopper's currency, checkout fails with 'no GBP price book entry for ...' as expected, but the other items in that cart stay held: their available stock drops and only comes back about 20 minutes later. Carts that fail because something is out of stock release their holds immediately.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "OrderService.place_order"},
+    "bug": "The rollback handler catches only (InsufficientStock, OrderValidationError); LookupError from the price lookup is no longer caught, so reservations taken for earlier lines are not released."
+  },
+  {
+    "id": "h3_09",
+    "query": "The order detail page and packing slips list an order's lines alphabetically by SKU instead of in the order the shopper added them at checkout. The customer's order history list shows lines in the right order.",
+    "target": {"path": "ledgerline/orders/repository.py", "symbol": "OrderRepository.get"},
+    "bug": "The single-order line query sorts by sku instead of position, so lines are no longer returned in their original checkout order."
+  },
+  {
+    "id": "h3_10",
+    "query": "Some customers never receive receipts or refund emails. The refund notifier's 'skipped' counter keeps climbing with 'refund email for ord_... not rendered (bad address or amount)', yet the addresses look valid in the admin; many came from the old shop import with a leading or trailing space.",
+    "target": {"path": "ledgerline/notifications/email.py", "symbol": "_validate_address"},
+    "bug": "The address regex is matched against the raw input (address) instead of the stripped value (cleaned), so addresses with surrounding whitespace are rejected as undeliverable."
+  },
+  {
+    "id": "h3_11",
+    "query": "In the web app, every automatic retry of a GET after a 502 or a network blip waits a full 10 seconds before firing, so the order search spinner hangs even on a one-off error. Responses that carry a Retry-After header are retried at the right time.",
+    "target": {"path": "web/src/api/client.ts", "symbol": "backoffDelay"},
+    "bug": "The jittered exponential delay is combined with MAX_RETRY_DELAY_MS using Math.max instead of Math.min, so every backoff is at least (and after sleep's clamp exactly) 10 seconds."
+  },
+  {
+    "id": "h3_12",
+    "query": "When a shopper raises a cart line above what's in stock, the cart shows 'Only 2 left in stock.' but the stepper and line total keep showing the quantity they asked for (5) until the page is reloaded. Other failures, like a network error, roll the quantity back correctly.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "CartStore.setQuantity"},
+    "bug": "The insufficient_stock error branch sets only the error message and no longer restores lines: previous, leaving the optimistic quantity in place."
+  },
+  {
+    "id": "h3_13",
+    "query": "Gift cards listed by marketplace sellers (SKUs like 'gc-50-acme') are receiving volume-tier and coupon discounts from the pricing engine. Our own gift cards ('GC-50') and donations are still excluded correctly.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "LineItem.is_discountable"},
+    "bug": "The non-discountable prefix check compares with == instead of eq_ignore_ascii_case, so lower-case 'gc-'/'don-' SKUs are treated as discountable despite the documented case-insensitive match."
+  },
+  {
+    "id": "h3_14",
+    "query": "On shared store iPads, when a second staff member signs in over the first without signing out (log: 'account switched without explicit sign-out'), the app keeps making API calls as the first user and X-Ledgerline-User still carries the old id until the app is force-quit and relaunched.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "SessionManager.signIn"},
+    "bug": "Signing in saves the new tokens to the keychain but no longer updates the in-memory cache (cached = tokens), so a previously cached session keeps being used until the process restarts."
+  },
+  {
+    "id": "h3_15",
+    "query": "During a backend outage the Android checkout shows shoppers raw text like 'HTTP 503 Service Unavailable' under the shipping options instead of 'Something went wrong. Please try again.' Validation messages from 4xx responses should still be shown as they are today.",
+    "target": {"path": "android/app/src/main/java/com/ledgerline/checkout/CheckoutViewModel.kt", "symbol": "CheckoutViewModel.userMessage"},
+    "bug": "The HttpException branch shows the exception message for codes in 400..599 instead of 400..499, leaking Retrofit's 'HTTP 5xx ...' text for server errors."
+  }
+]

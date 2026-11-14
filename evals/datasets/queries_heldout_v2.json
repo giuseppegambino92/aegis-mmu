@@ -1,0 +1,92 @@
+[
+  {
+    "id": "h2_01",
+    "query": "Two support agents hit Refund on the same order within a second of each other and both refunds went through at the PSP, so the customer got paid back twice and the order is now refunded beyond what was captured. Refunds on an order are supposed to be one at a time.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundService._lock_for"},
+    "bug": "On a cache miss a new threading.Lock() is created and returned without being stored in self._order_locks, so every request gets its own lock and concurrent refunds on the same order are never serialised."
+  },
+  {
+    "id": "h2_02",
+    "query": "On the monthly merchant statement the running balance column is one row behind: the first movement shows the brought-forward amount, and the last line's balance doesn't match the closing balance. The change amounts themselves look correct.",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger.statement"},
+    "bug": "`running += change` happens after the StatementLine is appended, so each line's running_balance is the balance before that line's movement."
+  },
+  {
+    "id": "h2_03",
+    "query": "About 15 minutes after an FX worker starts, refund payouts in other currencies start failing with 'FX rate unavailable for JPY: USD/JPY quote from 09:02 is stale', even though the treasury feed pushes fresh rates every minute. The fx_quotes_applied metric is 0 after the first batch.",
+    "target": {"path": "ledgerline/payments/currency.py", "symbol": "FxRateTable.load"},
+    "bug": "The replay guard is inverted (`quote.as_of >= existing.as_of: continue`), so every newer quote for a pair already in the table is dropped and rates stay frozen at the first value loaded."
+  },
+  {
+    "id": "h2_04",
+    "query": "When support clicks 'unlock password reset' for a customer, the audit log records the reset, but in production the customer keeps getting 429s until the 15-minute window runs out. It works on staging (single node, in-memory cache). Prod logs show 'redis set failed for rl:...' warnings with 'invalid expire time in set command' at the moment of the unlock.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "RedisBackend.set"},
+    "bug": "The TTL is sent as whole seconds (`ex=int(ttl_seconds)`) instead of milliseconds (`px=int(ttl_seconds * 1000)`), so sub-second TTLs become ex=0 (rejected by Redis, error swallowed) and fractional TTLs are truncated."
+  },
+  {
+    "id": "h2_05",
+    "query": "Our security review found that an API key with only the `orders` scope can call the order-export endpoints, which require `orders_export:read`, and gets 200 instead of 403. Keys scoped to `payouts` correctly get 403 there.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "Claims.has_scope"},
+    "bug": "The parent-scope check is a bare prefix match (`scope.startswith(granted)`) instead of comparing the segment before ':', so a grant of `orders` also satisfies unrelated scopes like `orders_export:read`."
+  },
+  {
+    "id": "h2_06",
+    "query": "Clients hitting 429 on the API get Retry-After and X-RateLimit-Reset values of up to about 90 seconds even though our read/write limits use 60-second windows. Per-minute quotas also seem to reset around :30 past each minute instead of on the minute.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "RateLimiter._window"},
+    "bug": "The window start is computed with `int(round(now / width)) * width` instead of floor division, shifting windows by half a width so the start can be in the future and reset_after can reach 1.5x the window."
+  },
+  {
+    "id": "h2_07",
+    "query": "Checkout fails with 'out of stock' for some SKUs we carry in more than one warehouse, even though the product page shows dozens available. The error says something like 'requested 5, available 2', and the second warehouse has 10 free units. SKUs stocked in a single warehouse are fine.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger._best_level"},
+    "bug": "The warehouse is chosen with `max(..., key=lambda level: level.on_hand)` instead of `level.available`, so a building with lots of reserved/safety stock wins and the reservation fails even though another warehouse could cover the line."
+  },
+  {
+    "id": "h2_08",
+    "query": "Paid orders that include a gift card are losing stock holds: physical items listed after the gift card line get released by the reservation sweeper about 20 minutes after checkout and resold, and the warehouse sees 'hold ... was gone at shipment' errors. Orders without a gift card, or with it as the last line, are fine.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "OrderService.mark_paid"},
+    "bug": "The hold-extension loop uses `break` instead of `continue` on a line without a reservation, so every stock line after a digital (gift card/service) line keeps its checkout TTL instead of being extended to PAID_HOLD_TTL."
+  },
+  {
+    "id": "h2_09",
+    "query": "Our API fuzzer found that the customer order-history endpoint returns 500 instead of 400 for some bogus pagination cursors, e.g. the base64 of `[]` or of a JSON string. The traceback ends in `TypeError: list indices must be integers or slices, not str`. Most tampered cursors correctly get 400 invalid_cursor.",
+    "target": {"path": "ledgerline/orders/repository.py", "symbol": "_decode_cursor"},
+    "bug": "The except clause catches only (ValueError, KeyError), not TypeError, so cursors that decode to valid non-object JSON raise an unhandled TypeError (500) instead of InvalidCursor (400)."
+  },
+  {
+    "id": "h2_10",
+    "query": "German and French customers say their order confirmation email looks inconsistent: each item price shows as €12.50 but the 'Total charged' line shows 12,50 €. English-locale receipts look fine.",
+    "target": {"path": "ledgerline/notifications/email.py", "symbol": "ReceiptEmailComposer.render"},
+    "bug": "Receipt lines are formatted with `format_money(line.amount)` without passing the customer's locale, so item prices always use the en_US layout while the total uses the customer locale."
+  },
+  {
+    "id": "h2_11",
+    "query": "During last night's payment-provider brownout, web checkouts failed on the very first 503 instead of retrying, and shoppers saw 'Something went wrong' when they clicked Place order. Gateway logs show POST /v1/orders requests from the web app arriving with no Idempotency-Key header.",
+    "target": {"path": "web/src/api/client.ts", "symbol": "ApiClient.placeOrder"},
+    "bug": "The idempotency key is put inside the JSON body (`body: { cartId, idempotencyKey }`) instead of the `idempotencyKey` request option, so the POST has no Idempotency-Key header and is treated as non-retryable."
+  },
+  {
+    "id": "h2_12",
+    "query": "After reloading the cart page, the line items show up but the subtotal and total never load and the spinner keeps going. It recovers as soon as the shopper changes a quantity, and it never happens in a private window or a fresh browser.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "CartStore.applyResponse"},
+    "bug": "The stale-response guard uses `response.version <= this.state.version` instead of `<`, so a server response with the same version as the restored localStorage snapshot is dropped, leaving totals null and loading true."
+  },
+  {
+    "id": "h2_13",
+    "query": "Background refresh and silent-push syncs on iOS fail whenever the phone is locked: logs show `could not read session from store: storage(-25308)` and the request fails with notSignedIn. The same sync works fine as soon as the user unlocks the phone, and they're still signed in when they open the app.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "KeychainTokenStore.save"},
+    "bug": "Items are saved with kSecAttrAccessibleWhenUnlockedThisDeviceOnly instead of kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, so keychain access fails with errSecInteractionNotAllowed (-25308) while the device is locked."
+  },
+  {
+    "id": "h2_14",
+    "query": "Merchants can't save a 100%-off coupon from the dashboard: loading the rules fails with `invalid configuration: coupon STAFF100: 10000 bps is out of range`. A 99% coupon (9900 bps) saves fine.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "validate_coupon"},
+    "bug": "The PercentOff range check uses the exclusive range `1..BPS_DENOMINATOR` instead of `1..=BPS_DENOMINATOR`, rejecting a valid 10000 bps (100%) coupon."
+  },
+  {
+    "id": "h2_15",
+    "query": "On Android checkout, if the network drops right after a customer switches from Standard to Express shipping, the offline banner shows but the Pay button stays enabled with the old Standard total, and the payment goes ahead for an amount that doesn't match the selected shipping.",
+    "target": {"path": "android/app/src/main/java/com/ledgerline/checkout/CheckoutViewModel.kt", "symbol": "CheckoutViewModel.selectShipping"},
+    "bug": "Changing the shipping option no longer resets `total` to null, so the previous option's total stays in state; if the new quote fails, canPay stays true and payment proceeds with a stale total."
+  }
+]

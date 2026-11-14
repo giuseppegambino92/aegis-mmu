@@ -1,0 +1,13 @@
+{
+  "target_field": "price_eur",
+  "minimal_chain": [
+    10,
+    14,
+    20
+  ],
+  "n_entries": 40,
+  "secret_inputs": [
+    "password"
+  ],
+  "search_id": "srch_808915f87629"
+}

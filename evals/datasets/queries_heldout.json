@@ -1,0 +1,92 @@
+[
+  {
+    "id": "h01",
+    "query": "Support can't find orders for customers whose email has a plus sign in it (jane+shop@example.com) using the order search on the web dashboard. The API access log shows the request arriving as email=jane shop@example.com.",
+    "target": {"path": "web/src/api/client.ts", "symbol": "buildQueryString"},
+    "bug": "Query values are escaped with encodeURI instead of encodeURIComponent, so '+', '&', '=' and '#' in user input are sent raw and the server decodes '+' as a space (or splits the parameter)."
+  },
+  {
+    "id": "h02",
+    "query": "The little badge on the bag icon in the site header shows 2 when I have three mugs and one poster in there. It only ever seems to go up when I add a different product.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "CartStore.itemCount"},
+    "bug": "itemCount() returns the number of lines with quantity > 0 instead of summing line quantities, despite its doc saying 'number of units'."
+  },
+  {
+    "id": "h03",
+    "query": "Tax reconciliation fails for carts that contain a gift card plus discounted merchandise: the per-line discount breakdown from the pricing engine (allocate_discount) adds up to far less than the coupon, e.g. a $10 coupon whose line shares sum to $1.85. Carts without a gift card reconcile fine.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "DiscountEngine.allocate_discount"},
+    "bug": "The proportional-split denominator sums gross over all lines (including non-discountable gift cards/donations) instead of only the eligible lines, so floored shares are far too small and the one-unit-per-line leftover pass cannot make up the difference."
+  },
+  {
+    "id": "h04",
+    "query": "Security audit finding: after a user logs off in the iPhone app, their refresh token keeps working. The auth server has no /oauth/revoke calls at all from iOS clients, while web and Android logouts show up.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "SessionManager.signOut"},
+    "bug": "The cached tokens and the keychain item are cleared before the refresh token is read (via currentTokens()), so the revoke branch always sees nil and never calls api.revoke."
+  },
+  {
+    "id": "h05",
+    "query": "On Android, if a shopper taps Express and then quickly switches to Standard delivery, the order summary sometimes keeps showing the Express total while Standard is selected. Waiting a second between taps avoids it.",
+    "target": {"path": "android/app/src/main/java/com/ledgerline/checkout/CheckoutViewModel.kt", "symbol": "CheckoutViewModel.requote"},
+    "bug": "The previous quoteJob is no longer cancelled before launching a new one, so the debounce does nothing and a slower response for the earlier option can overwrite the total for the currently selected option."
+  },
+  {
+    "id": "h06",
+    "query": "During Tuesday's treasury feed outage, payouts converted from EUR to USD kept going out at a rate that was several hours old, while USD to EUR conversions correctly failed with StaleRateError. Treasury only publishes the USD/EUR direction.",
+    "target": {"path": "ledgerline/payments/currency.py", "symbol": "FxRateTable.rate_for"},
+    "bug": "When only the inverse pair is published, the derived rate is returned without calling _ensure_fresh, so stale quotes are never rejected in the reverse direction."
+  },
+  {
+    "id": "h07",
+    "query": "The nightly bank-statement reconciler flags every merchant payout as 'no journal entry found for payout po_...', even though merchant payable balances drop by the right amounts. Can you check post_payout in the ledger?",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger.post_payout"},
+    "bug": "The payout journal entry is posted without reference=payout_id (the docstring promises it), so entries_for_reference(payout_id) finds nothing."
+  },
+  {
+    "id": "h08",
+    "query": "A few hours after the API pods start, p95 latency on product pages triples and traffic to the catalog service jumps. The in-process memo layer reports a hit rate close to zero even for the hottest SKUs, and restarting the pods fixes it temporarily.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "TTLCache.set"},
+    "bug": "When the cache is over capacity, eviction calls popitem() (last=True) and removes the entry that was just inserted instead of the least-recently-used one, so once full nothing new ever sticks."
+  },
+  {
+    "id": "h09",
+    "query": "Right after the scheduled 30-day signing-key rotation ran, every dashboard user was kicked out: tokens issued minutes earlier got 401 'unsupported algorithm or unknown key id'. Keys from rotations months ago are apparently still in the keyring.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "TokenService.rotate_signing_key"},
+    "bug": "The pruning condition is inverted (now - retired_at < grace instead of >=), so the key that was just retired is dropped immediately while keys retired long ago are kept forever."
+  },
+  {
+    "id": "h10",
+    "query": "Acme upgraded to the plan with 100 report exports per hour and billing confirms the override synced, but their 11th CSV export within an hour still gets 429 Too Many Requests, exactly like a standard tenant.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "RateLimiter.rule_for"},
+    "bug": "Route classes that have a default rule (e.g. reports.export, api.read) return the default before the tenant's purchased overrides are consulted; overrides only apply to unconfigured route classes via the fallback."
+  },
+  {
+    "id": "h11",
+    "query": "Every minute or so, shoppers who are halfway through paying get bounced with 'item no longer available', while carts abandoned since yesterday still keep those units off the shelf on the product page.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger.expire_reservations"},
+    "bug": "The sweeper selects holds with expires_at > now (still live) instead of expires_at <= now, releasing active reservations and keeping expired ones."
+  },
+  {
+    "id": "h12",
+    "query": "Orders where only one of three items has left the warehouse show up as Shipped in the merchant dashboard, and the customer gets the 'your order is complete' email after the first parcel.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "OrderService.record_shipment"},
+    "bug": "Completion is computed with any() over the lines instead of all(), so the order becomes SHIPPED as soon as a single line is fully shipped."
+  },
+  {
+    "id": "h13",
+    "query": "In the customer order history API, every page after the first starts with the last order from the previous page, so the app's infinite scroll shows a duplicate row at each page boundary.",
+    "target": {"path": "ledgerline/orders/repository.py", "symbol": "OrderRepository.list_for_customer"},
+    "bug": "The keyset condition uses (created_at, id) <= cursor instead of <, so the cursor row itself is returned again at the top of the next page."
+  },
+  {
+    "id": "h14",
+    "query": "When our SMTP relay is sluggish, money-back requests made by support agents return HTTP 500 with 'TimeoutError: timed out', yet the shopper's card was actually credited and the ledger shows the entry.",
+    "target": {"path": "ledgerline/notifications/email.py", "symbol": "EmailRefundNotifier.refund_issued"},
+    "bug": "Only smtplib.SMTPException is caught around delivery; socket timeouts and connection errors (OSError/TimeoutError) propagate out of the notifier and fail a refund that has already been paid out."
+  },
+  {
+    "id": "h15",
+    "query": "Customers whose parcel arrived damaged should get everything back including delivery, but the payout stops at the merchandise amount: one paid $54.99 including $4.99 delivery and received $50.00.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundCalculator._refundable_balance"},
+    "bug": "The captured total starts from zero instead of order.shipping_paid, so shipping is left out of the refundable cap and full refunds that include shipping get capped to the line totals."
+  }
+]

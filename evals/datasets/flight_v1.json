@@ -1,0 +1,41 @@
+{
+  "data": {
+    "search_id": "srch_808915f87629",
+    "currency": "EUR",
+    "flights": [
+      {
+        "flight_number": "AZ610",
+        "carrier_name": "ITA Airways",
+        "origin": "FCO",
+        "destination": "JFK",
+        "departure_time": "2026-12-03T10:15:00Z",
+        "arrival_time": "2026-12-03T19:05:00Z",
+        "duration_minutes": 590,
+        "price_eur": 412.5,
+        "seats_available": 7
+      },
+      {
+        "flight_number": "DL241",
+        "carrier_name": "Delta Air Lines",
+        "origin": "FCO",
+        "destination": "JFK",
+        "departure_time": "2026-12-03T12:40:00Z",
+        "arrival_time": "2026-12-03T21:20:00Z",
+        "duration_minutes": 580,
+        "price_eur": 389.0,
+        "seats_available": 3
+      },
+      {
+        "flight_number": "UA915",
+        "carrier_name": "United Airlines",
+        "origin": "FCO",
+        "destination": "JFK",
+        "departure_time": "2026-12-03T15:05:00Z",
+        "arrival_time": "2026-12-04T00:10:00Z",
+        "duration_minutes": 605,
+        "price_eur": 455.9,
+        "seats_available": 12
+      }
+    ]
+  }
+}

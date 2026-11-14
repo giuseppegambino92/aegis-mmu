@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q01",
+    "query": "When a customer returns only some units from an order line (say 1 of 3), the refund is regularly one cent short of the prorated amount they paid. Refunding the whole line gives the right amount.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundCalculator.compute_refund"},
+    "bug": "Per-line proration is quantized with ROUND_DOWN instead of ROUND_HALF_EVEN, so partial-line refunds are truncated by up to one minor unit."
+  },
+  {
+    "id": "q02",
+    "query": "The merchant payable balance as of a cutoff leaves out journal entries posted exactly at the cutoff timestamp, so the end-of-day balance misses the settlement batch we post at 00:00:00.",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger.balance_as_of"},
+    "bug": "Entries are skipped when posted_at >= cutoff instead of > cutoff, excluding entries posted exactly at the cutoff even though the docstring says 'at or before'."
+  },
+  {
+    "id": "q03",
+    "query": "If an order is cancelled before it's paid (the shopper abandons the payment step), its items never go back to available stock. Cancelling a paid order releases the stock fine.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "OrderService.cancel_order"},
+    "bug": "The loop that releases stock reservations is nested inside the `status is PAID` branch, so cancelled PENDING orders keep their reservations."
+  },
+  {
+    "id": "q04",
+    "query": "Checkout says an item is out of stock when the warehouse has exactly as many sellable units as the shopper wants. With 3 available, a cart asking for 3 fails but asking for 2 works.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger.reserve"},
+    "bug": "The availability check uses `level.available <= quantity` instead of `<`, refusing reservations that would take the last available units."
+  },
+  {
+    "id": "q05",
+    "query": "Since we moved the auth workers to hosts whose system timezone is America/New_York, freshly issued API access tokens are rejected as expired. The same tokens verify fine on our UTC hosts.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "TokenService.verify"},
+    "bug": "The current time comes from time.mktime(datetime.utcnow().timetuple()), which reads UTC wall-clock time as local time and shifts 'now' by the host's UTC offset."
+  },
+  {
+    "id": "q06",
+    "query": "Integrations that poll our read endpoints heavily start getting 429 Too Many Requests on order create and update calls, even though they make only a few write calls per minute.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "RateLimiter._bucket_key"},
+    "bug": "The bucket key leaves out the rule name, so rules with the same window length (api.read and api.write, both 60s) share one counter."
+  },
+  {
+    "id": "q07",
+    "query": "After someone looks up a SKU's list price in EUR, requests for the same SKU in GBP get the EUR price back until the cached entry expires. The memoized lookup seems to ignore the currency argument.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "make_key"},
+    "bug": "Keyword arguments add only their sorted names to the key, not their values, so calls that differ only in keyword values (currency=...) collide."
+  },
+  {
+    "id": "q08",
+    "query": "In the web cart, an expired or made-up coupon code shows as applied with no error message, and there's an unhandled promise rejection in the console. Valid coupons sometimes don't change the cart total until the page is reloaded.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "CartStore.applyCoupon"},
+    "bug": "Missing `await` on `this.api.redeemCoupon(...)`: server rejections escape the try/catch, the coupon is marked applied right away, and the cart refresh races the redemption."
+  },
+  {
+    "id": "q09",
+    "query": "Bulk orders of exactly 100 units don't get the 100+ volume discount tier from the pricing engine, but 101 units do. Every tier seems to start one unit above its minimum quantity.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "DiscountEngine.apply_tiered"},
+    "bug": "The tier filter uses `line.quantity > tier.min_quantity` instead of `>=`, making the documented inclusive thresholds exclusive."
+  },
+  {
+    "id": "q10",
+    "query": "The iOS app calls the token refresh endpoint before every API request while the session is still fresh. Once the access token actually expires it stops refreshing, and users get 401s until they sign in again.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "SessionManager.needsRefresh"},
+    "bug": "The remaining lifetime is computed as now.timeIntervalSince(expiresAt) (sign inverted) instead of expiresAt.timeIntervalSince(now), so fresh tokens always refresh and expired ones never do."
+  }
+]

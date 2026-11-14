@@ -1,0 +1,54 @@
+{
+  "data": {
+    "search_id": "srch_808915f87629",
+    "currency": "EUR",
+    "itineraries": [
+      {
+        "segment": {
+          "flight_no": "AZ608",
+          "airline_name": "ITA Airways",
+          "from_airport": "FCO",
+          "to_airport": "JFK",
+          "departs_at": "2026-12-10T09:55:00Z",
+          "arrives_at": "2026-12-10T18:40:00Z",
+          "aircraft": "A330"
+        },
+        "duration_minutes": 585,
+        "fare": {
+          "amount_eur": 398.4,
+          "taxes_eur": 61.2,
+          "cabin": "economy"
+        },
+        "availability": {
+          "seats_left": 5,
+          "waitlist": false
+        }
+      },
+      {
+        "segment": {
+          "flight_no": "AA199",
+          "airline_name": "American Airlines",
+          "from_airport": "FCO",
+          "to_airport": "JFK",
+          "departs_at": "2026-12-10T11:30:00Z",
+          "arrives_at": "2026-12-10T20:25:00Z",
+          "aircraft": "B772"
+        },
+        "duration_minutes": 595,
+        "fare": {
+          "amount_eur": 431.7,
+          "taxes_eur": 58.9,
+          "cabin": "economy"
+        },
+        "availability": {
+          "seats_left": 9,
+          "waitlist": false
+        }
+      }
+    ],
+    "tracking": {
+      "experiment": "v2-rollout",
+      "bucket": 7
+    }
+  }
+}

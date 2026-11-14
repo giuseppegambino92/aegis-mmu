@@ -1,0 +1,92 @@
+[
+  {
+    "id": "h4_01",
+    "query": "The treasury FX feed died on Sunday morning and EUR refunds paid out in USD were correctly refused as stale all through Monday, except for a window around 09:00-09:15 on Monday when a batch went through at Sunday's 09:00 rate. No StaleRateError was logged for those payouts.",
+    "target": {"path": "ledgerline/payments/currency.py", "symbol": "FxRateTable._ensure_fresh"},
+    "bug": "The age comparison uses `age.seconds > self._max_age.seconds`; timedelta.seconds drops the days component, so a quote that is N days plus a few minutes old looks fresh."
+  },
+  {
+    "id": "h4_02",
+    "query": "Finance used the admin console to back out a capture that had been booked twice for the same order. Instead of cancelling it out, the correcting journal entry doubled the merchant's payable and pushed clearing up again, even though the trial balance still nets to zero.",
+    "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger.reverse"},
+    "bug": "The mirrored postings keep `p.side` instead of `p.side.opposite()`, so the correcting entry re-applies the original instead of negating it."
+  },
+  {
+    "id": "h4_03",
+    "query": "Refunds paid out in a different currency than the charge (e.g. a EUR order refunded to a GBP card) succeed at the PSP, but every one logs CRITICAL 'paid out but ledger posting failed; needs manual entry' with an UnknownAccount for the merchant's GBP payable. Same-currency refunds book fine.",
+    "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundService.request_refund"},
+    "bug": "The ledger posting passes the converted `payout` instead of `quote.total`, so cross-currency refunds are booked in the payout currency against accounts the merchant does not hold."
+  },
+  {
+    "id": "h4_04",
+    "query": "Redis memory on the production API cluster grows every day and never comes back down. Almost all of it is old per-window rate-limit counter keys (ll:rl:...), and TTL on any of them returns -1.",
+    "target": {"path": "ledgerline/infra/cache.py", "symbol": "RedisBackend.incr"},
+    "bug": "The counter's EXPIRE is sent with `xx=True` instead of `nx=True`; XX only applies to keys that already have an expiry, so freshly created counters never get a TTL."
+  },
+  {
+    "id": "h4_05",
+    "query": "When a dashboard user signs out, or we kill a compromised credential, the old access token keeps working until its natural expiry. The auth service logs '0 revocations outstanding, 1 pruned' for every one of these.",
+    "target": {"path": "ledgerline/auth/tokens.py", "symbol": "TokenService.revoke"},
+    "bug": "The pruning filter uses `exp > cutoff` instead of `exp < cutoff`, so it deletes every still-valid entry from the deny list, including the one just added."
+  },
+  {
+    "id": "h4_06",
+    "query": "A client that only uses the reports export endpoint gets 429 Too Many Requests on its 10th export within the hour, even though the plan allows 10 per hour. The 9th response says X-RateLimit-Remaining: 1, and there's no 'rate limited' log line for the rejected call.",
+    "target": {"path": "ledgerline/auth/rate_limit.py", "symbol": "RateLimiter.check"},
+    "bug": "The decision is `remaining > 0` instead of `remaining >= 0`, so the request that uses the last unit of capacity is rejected."
+  },
+  {
+    "id": "h4_07",
+    "query": "Every morning after the nightly WMS import we oversell items that were in carts mid-payment. The inventory snapshot taken right after the import shows reserved=0 on every SKU, even though there are plenty of live holds.",
+    "target": {"path": "ledgerline/inventory/stock.py", "symbol": "StockLedger.load"},
+    "bug": "The guard tests `level.reserved` (always 0 on WMS export rows) instead of `existing.reserved`, so live holds are never carried over to the replacement level."
+  },
+  {
+    "id": "h4_08",
+    "query": "During last night's Kafka broker maintenance POST /v1/orders returned 500s with KafkaTimeoutError tracebacks, yet the orders had actually been saved as PENDING with stock held, so shoppers retried and created duplicate orders. Order events are supposed to be best-effort because the outbox relay re-sends them.",
+    "target": {"path": "ledgerline/orders/service.py", "symbol": "OrderService._publish"},
+    "bug": "The best-effort guard catches only `ConnectionError` instead of `Exception`, so broker SDK errors (e.g. KafkaTimeoutError) propagate and fail the request after the order is persisted."
+  },
+  {
+    "id": "h4_09",
+    "query": "Some refund emails never reach customers. Our logs show the relay deferring the message with 451 and us retrying twice, then nothing: no error is raised, the notifier's sent counter goes up, and the relay never sees a third attempt.",
+    "target": {"path": "ledgerline/notifications/email.py", "symbol": "SmtpMailer.send_with_retry"},
+    "bug": "The loop is `range(1, attempts)` instead of `range(1, attempts + 1)`: one attempt short, and since `attempt == attempts` is never reached, a transient failure on the last attempt is silently swallowed."
+  },
+  {
+    "id": "h4_10",
+    "query": "Since the last web release, yen prices in the cart are shown 100x too small: a ¥1,500 item renders as ¥15 on the line and in the totals. USD and EUR carts look right, and the API returns the correct amountMinor.",
+    "target": {"path": "web/src/cart/cartStore.ts", "symbol": "formatMoney"},
+    "bug": "The Intl formatter is built with `maximumFractionDigits: 2`, so `resolvedOptions().maximumFractionDigits` is 2 for every currency and zero-decimal amounts like JPY are divided by 100."
+  },
+  {
+    "id": "h4_11",
+    "query": "Web users whose session has gone stale are bounced to the login page instead of being silently re-authenticated. The network tab shows a 401, then the same request replayed with the identical expired Bearer token and a second 401; the token provider never mints a new token.",
+    "target": {"path": "web/src/api/client.ts", "symbol": "ApiClient.buildHeaders"},
+    "bug": "The token provider is called as `getToken()` without `{ forceRefresh }`, so the retry after a 401 reuses the cached expired token."
+  },
+  {
+    "id": "h4_12",
+    "query": "On iOS, when the app resumes after the access token has lapsed, the home screen fires several API calls at once and the auth server receives several refresh calls with the same refresh token. Refresh tokens are single-use, so all but one are rejected and the user ends up signed out.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "SessionManager.refresh"},
+    "bug": "The new refresh task is never stored in `refreshTask`, so concurrent callers don't find an in-flight task to join and each starts its own refresh."
+  },
+  {
+    "id": "h4_13",
+    "query": "After the 5.2 iOS update every user was signed out on first launch. Security also reports that session items now show up in iCloud Keychain and appear on users' other Apple devices.",
+    "target": {"path": "ios/Ledgerline/Session/SessionManager.swift", "symbol": "KeychainTokenStore.baseQuery"},
+    "bug": "The query sets `kSecAttrSynchronizable` to `kCFBooleanTrue` instead of `kCFBooleanFalse`: existing device-only items no longer match (so users look signed out) and new items sync through iCloud."
+  },
+  {
+    "id": "h4_14",
+    "query": "When a cart's volume discount and the shopper's coupon come to exactly the same amount, the pricing engine picks the coupon, so a one-time code gets burned on an order where it saved nothing extra. The rule is that ties go to the volume tier.",
+    "target": {"path": "services/pricing-engine/src/discount.rs", "symbol": "DiscountEngine.best_discount"},
+    "bug": "The comparison is `coupon >= tier` instead of `coupon > tier`, so ties choose the coupon."
+  },
+  {
+    "id": "h4_15",
+    "query": "On Android, if the app is killed in the background during checkout (e.g. while the shopper is in their banking app), coming back always resets shipping to the carrier default. Logcat shows 'restored shipping option <a UUID> is no longer offered', and that UUID isn't any shipping option id.",
+    "target": {"path": "android/app/src/main/java/com/ledgerline/checkout/CheckoutViewModel.kt", "symbol": "CheckoutViewModel.loadShippingOptions"},
+    "bug": "The restored selection is read from `KEY_IDEMPOTENCY` instead of `KEY_SELECTED_SHIPPING`, so it is the checkout idempotency UUID, never matches an option, and the saved choice is cleared."
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "$.data.search_id": "$.data.search_id",
+  "$.data.currency": "$.data.currency",
+  "$.data.flights[*].flight_number": "$.data.itineraries[*].segment.flight_no",
+  "$.data.flights[*].carrier_name": "$.data.itineraries[*].segment.airline_name",
+  "$.data.flights[*].origin": "$.data.itineraries[*].segment.from_airport",
+  "$.data.flights[*].destination": "$.data.itineraries[*].segment.to_airport",
+  "$.data.flights[*].departure_time": "$.data.itineraries[*].segment.departs_at",
+  "$.data.flights[*].arrival_time": "$.data.itineraries[*].segment.arrives_at",
+  "$.data.flights[*].duration_minutes": "$.data.itineraries[*].duration_minutes",
+  "$.data.flights[*].price_eur": "$.data.itineraries[*].fare.amount_eur",
+  "$.data.flights[*].seats_available": "$.data.itineraries[*].availability.seats_left"
+}

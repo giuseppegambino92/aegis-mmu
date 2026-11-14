@@ -1,0 +1,29 @@
+{
+  "turns": [
+    {
+      "query": "Support says partial refunds come out a cent low when a customer returns one unit from a multi-unit line. Can you check how we prorate refund lines against what was charged?",
+      "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundCalculator.compute_refund"},
+      "assistant_reply": "Found it: the prorated line amount is quantized with ROUND_DOWN, but the docstring and the refundable-balance cap use half-even. I switched the line rounding to ROUND_HALF_EVEN."
+    },
+    {
+      "query": "Related: when a refund for a USD charge is paid out in JPY, the payout has fractional yen like ¥1513.70 and the PSP rejects it. Where does the FX conversion for refund payouts round?",
+      "target": {"path": "ledgerline/payments/currency.py", "symbol": "convert"},
+      "assistant_reply": "convert() quantizes the converted amount to the source currency's quantum (0.01 for USD) instead of the target's. It now rounds with quantum_for(target), so yen payouts are whole numbers."
+    },
+    {
+      "query": "Now the ledger side: after a refund is posted, the merchant's payable balance goes up by the refund amount instead of down.",
+      "target": {"path": "ledgerline/payments/ledger.py", "symbol": "Ledger.post_refund"},
+      "assistant_reply": "The refund journal entry has its sides swapped: it credits payable and debits clearing. I flipped it to debit payable and credit clearing, which mirrors post_capture."
+    },
+    {
+      "query": "The refund confirmation email shows yen amounts with two decimals (¥1,514.00), and Kuwaiti dinar refunds lose their third decimal place.",
+      "target": {"path": "ledgerline/notifications/email.py", "symbol": "format_money"},
+      "assistant_reply": "format_money always formats with two decimals. It now takes the precision from the currency's ISO 4217 minor units in MINOR_UNITS, so JPY shows no decimals and KWD shows three."
+    },
+    {
+      "query": "Back to refunds: customers who ask to return something on the last day of the 30-day return window are rejected as outside the window.",
+      "target": {"path": "ledgerline/payments/refunds.py", "symbol": "RefundPolicy.is_within_window"},
+      "assistant_reply": "The window check uses `.days < window_days`, so day 30 counts as outside even though the policy is inclusive. I changed it to `<=`."
+    }
+  ]
+}
