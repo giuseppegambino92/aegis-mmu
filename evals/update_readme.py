@@ -2,6 +2,8 @@
 
 Replaces the regions between ``<!-- BEGIN:COMPLIANCE -->``/``<!-- END:COMPLIANCE -->`` and
 ``<!-- BEGIN:REPORT -->``/``<!-- END:REPORT -->`` with content from evals/latest_report.{json,md}.
+When ``evals/latest_runs.json`` (from ``python -m evals.repeat_runs``) ends with the current report, the
+``<!-- BEGIN:VARIANCE -->`` region gets the per-run spread of every row that varied between runs.
 Run: ``python -m evals.update_readme`` (the benchmark suite calls it automatically).
 """
 
@@ -30,6 +32,44 @@ HEADER = {
 }
 
 
+VARIANCE = {
+    "en": {"head": "_Run-to-run spread: {n} consecutive runs of the suite ({loads}). The last run is the one reported "
+                   "above. In every run {all_pass} rows passed and {all_fail} failed; {flip} row(s) passed in some runs "
+                   "and failed in others. Rows not listed had the same value in every run._",
+           "cols": ("Target", "Run {i}", "Passed"), "load": "load {a}→{b}",
+           "stale": "_No multi-run data for the current report: run `python -m evals.repeat_runs 3`._"},
+    "it": {"head": "_Variabilità tra esecuzioni: {n} esecuzioni consecutive della suite ({loads}). L'ultima è quella "
+                   "riportata sopra. In tutte le esecuzioni {all_pass} righe sono state superate e {all_fail} no; "
+                   "{flip} riga/e superata/e solo in alcune. Le righe non elencate hanno avuto lo stesso valore in ogni "
+                   "esecuzione._",
+           "cols": ("Obiettivo", "Esecuzione {i}", "Superato"), "load": "load {a}→{b}",
+           "stale": "_Nessun dato multi-esecuzione per il report corrente: eseguire `python -m evals.repeat_runs 3`._"},
+}
+
+
+def variance_block(report: dict, lang: str) -> str:
+    t = VARIANCE[lang]
+    path = ROOT / "evals" / "latest_runs.json"
+    runs = json.loads(path.read_text())["runs"] if path.exists() else []
+    if not runs or runs[-1]["generated_at"] != report["generated_at"] or runs[-1]["compliance"] != [
+            {"target": c["target"], "measured": c["measured"], "pass": bool(c["pass"])} for c in report["compliance"]]:
+        return t["stale"]
+    n = len(runs)
+    rows = list(zip(*[r["compliance"] for r in runs]))
+    passes = [sum(c["pass"] for c in row) for row in rows]
+    loads = ", ".join(t["load"].format(a=r["load_avg_start"][0], b=r["load_avg_end"][0]) for r in runs)
+    out = [t["head"].format(n=n, loads=loads, all_pass=sum(k == n for k in passes),
+                            all_fail=sum(k == 0 for k in passes), flip=sum(0 < k < n for k in passes)), ""]
+    c0, ci, cp = t["cols"]
+    out.append("| " + " | ".join([c0] + [ci.format(i=i + 1) for i in range(n)] + [cp]) + " |")
+    out.append("|" + "---|" * (n + 2))
+    for row, k in zip(rows, passes):
+        if len({c["measured"] for c in row}) > 1 or 0 < k < n:
+            cells = [f"{c['measured']} {'✅' if c['pass'] else '❌'}" for c in row]
+            out.append(f"| {row[0]['target']} | " + " | ".join(cells) + f" | {k}/{n} |")
+    return "\n".join(out)
+
+
 def main() -> None:
     report = json.loads((ROOT / "evals" / "latest_report.json").read_text())
     md = (ROOT / "evals" / "latest_report.md").read_text()
@@ -49,6 +89,7 @@ def main() -> None:
         table += [f"| {c['target']} | {c['measured']} | {'✅' if c['pass'] else '❌'} |" for c in comp]
         text = readme.read_text()
         text = _splice(text, "COMPLIANCE", "\n".join(table))
+        text = _splice(text, "VARIANCE", variance_block(report, lang))
         text = _splice(text, "REPORT", body)
         readme.write_text(text)
         print(f"{name} updated ({n}/{len(comp)} targets pass)")

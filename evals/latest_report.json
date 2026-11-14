@@ -1,13 +1,13 @@
 {
   "aegis_mmu_version": "0.1.0",
-  "generated_at": "2026-11-14 00:27 UTC",
+  "generated_at": "2026-11-14 00:53 UTC",
   "machine": "Darwin arm64 \u00b7 Python 3.14.10 \u00b7 numpy 2.5.4",
   "tokenizer": "tiktoken/cl100k_base",
   "cpu_count": 14,
   "load_avg_start": [
-    7.91,
-    40.5,
-    63.45
+    3.31,
+    6.75,
+    16.79
   ],
   "engine": "fast-local-srp-512",
   "scenarios": {
@@ -23,9 +23,9 @@
         "target_at_l0_any_rank": 0.8,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.6428,
-          "p95_ms": 19.9538,
-          "p99_ms": 25.9724,
+          "p50_ms": 9.5749,
+          "p95_ms": 17.7417,
+          "p99_ms": 22.4792,
           "n": 10
         }
       },
@@ -49,7 +49,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 27.477,
+          "latency_ms": 23.664,
           "naive_target_whole_in_context": false
         },
         {
@@ -63,7 +63,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.132,
+          "latency_ms": 8.48,
           "naive_target_whole_in_context": false
         },
         {
@@ -77,7 +77,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.171,
+          "latency_ms": 8.785,
           "naive_target_whole_in_context": false
         },
         {
@@ -91,7 +91,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.375,
+          "latency_ms": 9.301,
           "naive_target_whole_in_context": false
         },
         {
@@ -105,7 +105,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.911,
+          "latency_ms": 9.849,
           "naive_target_whole_in_context": false
         },
         {
@@ -119,7 +119,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.759,
+          "latency_ms": 10.504,
           "naive_target_whole_in_context": false
         },
         {
@@ -133,7 +133,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.311,
+          "latency_ms": 10.139,
           "naive_target_whole_in_context": false
         },
         {
@@ -147,7 +147,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.73,
+          "latency_ms": 10.144,
           "naive_target_whole_in_context": false
         },
         {
@@ -161,7 +161,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.284,
+          "latency_ms": 8.685,
           "naive_target_whole_in_context": false
         },
         {
@@ -175,7 +175,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.673,
+          "latency_ms": 8.36,
           "naive_target_whole_in_context": true
         }
       ]
@@ -192,9 +192,9 @@
         "target_at_l0_any_rank": 0.867,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.7296,
-          "p95_ms": 14.9368,
-          "p99_ms": 21.3435,
+          "p50_ms": 9.2052,
+          "p95_ms": 14.3091,
+          "p99_ms": 20.6482,
           "n": 15
         }
       },
@@ -218,7 +218,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 22.945,
+          "latency_ms": 22.233,
           "naive_target_whole_in_context": false
         },
         {
@@ -232,7 +232,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.244,
+          "latency_ms": 8.162,
           "naive_target_whole_in_context": true
         },
         {
@@ -246,7 +246,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.281,
+          "latency_ms": 8.595,
           "naive_target_whole_in_context": true
         },
         {
@@ -260,7 +260,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.73,
+          "latency_ms": 9.205,
           "naive_target_whole_in_context": false
         },
         {
@@ -274,7 +274,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.589,
+          "latency_ms": 9.068,
           "naive_target_whole_in_context": true
         },
         {
@@ -288,7 +288,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.201,
+          "latency_ms": 8.728,
           "naive_target_whole_in_context": false
         },
         {
@@ -302,7 +302,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.469,
+          "latency_ms": 10.219,
           "naive_target_whole_in_context": false
         },
         {
@@ -316,7 +316,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.505,
+          "latency_ms": 10.913,
           "naive_target_whole_in_context": false
         },
         {
@@ -330,7 +330,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.633,
+          "latency_ms": 8.999,
           "naive_target_whole_in_context": false
         },
         {
@@ -344,7 +344,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.94,
+          "latency_ms": 8.438,
           "naive_target_whole_in_context": false
         },
         {
@@ -358,7 +358,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.055,
+          "latency_ms": 9.588,
           "naive_target_whole_in_context": false
         },
         {
@@ -372,7 +372,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.38,
+          "latency_ms": 9.764,
           "naive_target_whole_in_context": true
         },
         {
@@ -386,7 +386,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.599,
+          "latency_ms": 9.841,
           "naive_target_whole_in_context": false
         },
         {
@@ -400,7 +400,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.56,
+          "latency_ms": 9.794,
           "naive_target_whole_in_context": false
         },
         {
@@ -414,7 +414,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.294,
+          "latency_ms": 8.282,
           "naive_target_whole_in_context": false
         }
       ]
@@ -431,9 +431,9 @@
         "target_at_l0_any_rank": 0.867,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 11.2018,
-          "p95_ms": 16.9805,
-          "p99_ms": 24.8905,
+          "p50_ms": 9.969,
+          "p95_ms": 14.4903,
+          "p99_ms": 21.4178,
           "n": 15
         }
       },
@@ -457,7 +457,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 26.868,
+          "latency_ms": 23.15,
           "naive_target_whole_in_context": false
         },
         {
@@ -471,7 +471,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 12.595,
+          "latency_ms": 10.596,
           "naive_target_whole_in_context": false
         },
         {
@@ -485,7 +485,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.743,
+          "latency_ms": 10.773,
           "naive_target_whole_in_context": false
         },
         {
@@ -499,7 +499,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.336,
+          "latency_ms": 9.657,
           "naive_target_whole_in_context": true
         },
         {
@@ -513,7 +513,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.875,
+          "latency_ms": 10.255,
           "naive_target_whole_in_context": true
         },
         {
@@ -527,7 +527,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.859,
+          "latency_ms": 10.779,
           "naive_target_whole_in_context": false
         },
         {
@@ -541,7 +541,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.297,
+          "latency_ms": 8.825,
           "naive_target_whole_in_context": false
         },
         {
@@ -555,7 +555,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.612,
+          "latency_ms": 10.544,
           "naive_target_whole_in_context": false
         },
         {
@@ -569,7 +569,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.202,
+          "latency_ms": 9.991,
           "naive_target_whole_in_context": true
         },
         {
@@ -583,7 +583,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.526,
+          "latency_ms": 9.969,
           "naive_target_whole_in_context": false
         },
         {
@@ -597,7 +597,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.816,
+          "latency_ms": 9.628,
           "naive_target_whole_in_context": false
         },
         {
@@ -611,7 +611,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.222,
+          "latency_ms": 9.66,
           "naive_target_whole_in_context": false
         },
         {
@@ -625,7 +625,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.567,
+          "latency_ms": 8.281,
           "naive_target_whole_in_context": false
         },
         {
@@ -639,7 +639,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.0,
+          "latency_ms": 9.587,
           "naive_target_whole_in_context": false
         },
         {
@@ -653,7 +653,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.769,
+          "latency_ms": 7.976,
           "naive_target_whole_in_context": false
         }
       ]
@@ -670,9 +670,9 @@
         "target_at_l0_any_rank": 1.0,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 10.4804,
-          "p95_ms": 27.7191,
-          "p99_ms": 32.0889,
+          "p50_ms": 10.31,
+          "p95_ms": 23.5036,
+          "p99_ms": 23.82,
           "n": 15
         }
       },
@@ -696,7 +696,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 25.378,
+          "latency_ms": 23.899,
           "naive_target_whole_in_context": false
         },
         {
@@ -710,7 +710,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.102,
+          "latency_ms": 11.08,
           "naive_target_whole_in_context": false
         },
         {
@@ -724,7 +724,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.771,
+          "latency_ms": 10.541,
           "naive_target_whole_in_context": false
         },
         {
@@ -738,7 +738,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 33.181,
+          "latency_ms": 23.334,
           "naive_target_whole_in_context": false
         },
         {
@@ -752,7 +752,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.172,
+          "latency_ms": 8.472,
           "naive_target_whole_in_context": false
         },
         {
@@ -766,7 +766,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.132,
+          "latency_ms": 9.81,
           "naive_target_whole_in_context": false
         },
         {
@@ -780,7 +780,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.967,
+          "latency_ms": 10.31,
           "naive_target_whole_in_context": false
         },
         {
@@ -794,7 +794,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.961,
+          "latency_ms": 10.549,
           "naive_target_whole_in_context": false
         },
         {
@@ -808,7 +808,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.566,
+          "latency_ms": 9.025,
           "naive_target_whole_in_context": false
         },
         {
@@ -822,7 +822,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.23,
+          "latency_ms": 9.663,
           "naive_target_whole_in_context": false
         },
         {
@@ -836,7 +836,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.313,
+          "latency_ms": 11.72,
           "naive_target_whole_in_context": true
         },
         {
@@ -850,7 +850,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.056,
+          "latency_ms": 10.99,
           "naive_target_whole_in_context": false
         },
         {
@@ -864,7 +864,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.825,
+          "latency_ms": 8.327,
           "naive_target_whole_in_context": true
         },
         {
@@ -878,7 +878,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.48,
+          "latency_ms": 10.114,
           "naive_target_whole_in_context": false
         },
         {
@@ -892,7 +892,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.002,
+          "latency_ms": 9.587,
           "naive_target_whole_in_context": false
         }
       ]
@@ -909,9 +909,9 @@
         "target_at_l0_any_rank": 1.0,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 11.2855,
-          "p95_ms": 16.8,
-          "p99_ms": 24.6624,
+          "p50_ms": 10.442,
+          "p95_ms": 16.2546,
+          "p99_ms": 26.2333,
           "n": 15
         }
       },
@@ -935,7 +935,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 26.628,
+          "latency_ms": 28.728,
           "naive_target_whole_in_context": false
         },
         {
@@ -949,7 +949,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.968,
+          "latency_ms": 9.912,
           "naive_target_whole_in_context": false
         },
         {
@@ -963,7 +963,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.365,
+          "latency_ms": 10.874,
           "naive_target_whole_in_context": false
         },
         {
@@ -977,7 +977,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.588,
+          "latency_ms": 10.909,
           "naive_target_whole_in_context": true
         },
         {
@@ -991,7 +991,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.807,
+          "latency_ms": 10.136,
           "naive_target_whole_in_context": false
         },
         {
@@ -1005,7 +1005,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.85,
+          "latency_ms": 10.646,
           "naive_target_whole_in_context": false
         },
         {
@@ -1019,7 +1019,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.608,
+          "latency_ms": 10.176,
           "naive_target_whole_in_context": true
         },
         {
@@ -1033,7 +1033,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.285,
+          "latency_ms": 10.581,
           "naive_target_whole_in_context": false
         },
         {
@@ -1047,7 +1047,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.38,
+          "latency_ms": 10.487,
           "naive_target_whole_in_context": false
         },
         {
@@ -1061,7 +1061,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.808,
+          "latency_ms": 9.058,
           "naive_target_whole_in_context": false
         },
         {
@@ -1075,7 +1075,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.098,
+          "latency_ms": 10.855,
           "naive_target_whole_in_context": false
         },
         {
@@ -1089,7 +1089,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.579,
+          "latency_ms": 10.442,
           "naive_target_whole_in_context": true
         },
         {
@@ -1103,7 +1103,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.419,
+          "latency_ms": 9.948,
           "naive_target_whole_in_context": false
         },
         {
@@ -1117,7 +1117,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.975,
+          "latency_ms": 8.358,
           "naive_target_whole_in_context": false
         },
         {
@@ -1131,7 +1131,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.032,
+          "latency_ms": 9.644,
           "naive_target_whole_in_context": false
         }
       ]
@@ -1148,9 +1148,9 @@
         "target_at_l0_any_rank": 0.733,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 10.2557,
-          "p95_ms": 15.4631,
-          "p99_ms": 21.7261,
+          "p50_ms": 9.6312,
+          "p95_ms": 14.4429,
+          "p99_ms": 21.289,
           "n": 15
         }
       },
@@ -1174,7 +1174,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 23.292,
+          "latency_ms": 23.0,
           "naive_target_whole_in_context": false
         },
         {
@@ -1188,7 +1188,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.813,
+          "latency_ms": 9.454,
           "naive_target_whole_in_context": false
         },
         {
@@ -1202,7 +1202,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.684,
+          "latency_ms": 10.143,
           "naive_target_whole_in_context": false
         },
         {
@@ -1216,7 +1216,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.021,
+          "latency_ms": 9.631,
           "naive_target_whole_in_context": false
         },
         {
@@ -1230,7 +1230,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.645,
+          "latency_ms": 9.425,
           "naive_target_whole_in_context": false
         },
         {
@@ -1244,7 +1244,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.471,
+          "latency_ms": 10.244,
           "naive_target_whole_in_context": false
         },
         {
@@ -1258,7 +1258,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.845,
+          "latency_ms": 8.435,
           "naive_target_whole_in_context": false
         },
         {
@@ -1272,7 +1272,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.668,
+          "latency_ms": 10.493,
           "naive_target_whole_in_context": false
         },
         {
@@ -1286,7 +1286,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 12.108,
+          "latency_ms": 10.775,
           "naive_target_whole_in_context": false
         },
         {
@@ -1300,7 +1300,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.256,
+          "latency_ms": 9.095,
           "naive_target_whole_in_context": false
         },
         {
@@ -1314,7 +1314,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.14,
+          "latency_ms": 10.424,
           "naive_target_whole_in_context": false
         },
         {
@@ -1328,7 +1328,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.848,
+          "latency_ms": 9.603,
           "naive_target_whole_in_context": false
         },
         {
@@ -1342,7 +1342,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.191,
+          "latency_ms": 8.793,
           "naive_target_whole_in_context": false
         },
         {
@@ -1356,7 +1356,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.585,
+          "latency_ms": 10.355,
           "naive_target_whole_in_context": false
         },
         {
@@ -1370,7 +1370,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.92,
+          "latency_ms": 9.361,
           "naive_target_whole_in_context": true
         }
       ]
@@ -1387,9 +1387,9 @@
         "target_at_l0_any_rank": 0.867,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.9732,
-          "p95_ms": 14.8592,
-          "p99_ms": 22.3366,
+          "p50_ms": 9.4198,
+          "p95_ms": 14.4971,
+          "p99_ms": 21.9771,
           "n": 15
         }
       },
@@ -1413,7 +1413,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 24.206,
+          "latency_ms": 23.847,
           "naive_target_whole_in_context": false
         },
         {
@@ -1427,7 +1427,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.886,
+          "latency_ms": 8.23,
           "naive_target_whole_in_context": true
         },
         {
@@ -1441,7 +1441,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.651,
+          "latency_ms": 8.642,
           "naive_target_whole_in_context": true
         },
         {
@@ -1455,7 +1455,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.527,
+          "latency_ms": 9.332,
           "naive_target_whole_in_context": false
         },
         {
@@ -1469,7 +1469,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.785,
+          "latency_ms": 9.871,
           "naive_target_whole_in_context": true
         },
         {
@@ -1483,7 +1483,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.388,
+          "latency_ms": 9.11,
           "naive_target_whole_in_context": false
         },
         {
@@ -1497,7 +1497,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.707,
+          "latency_ms": 10.171,
           "naive_target_whole_in_context": false
         },
         {
@@ -1511,7 +1511,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.853,
+          "latency_ms": 10.49,
           "naive_target_whole_in_context": false
         },
         {
@@ -1525,7 +1525,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.973,
+          "latency_ms": 9.046,
           "naive_target_whole_in_context": false
         },
         {
@@ -1539,7 +1539,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.086,
+          "latency_ms": 8.952,
           "naive_target_whole_in_context": false
         },
         {
@@ -1553,7 +1553,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.353,
+          "latency_ms": 9.659,
           "naive_target_whole_in_context": false
         },
         {
@@ -1567,7 +1567,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.225,
+          "latency_ms": 9.745,
           "naive_target_whole_in_context": true
         },
         {
@@ -1581,7 +1581,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.47,
+          "latency_ms": 9.691,
           "naive_target_whole_in_context": false
         },
         {
@@ -1595,7 +1595,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.494,
+          "latency_ms": 9.42,
           "naive_target_whole_in_context": false
         },
         {
@@ -1609,7 +1609,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.947,
+          "latency_ms": 8.256,
           "naive_target_whole_in_context": false
         }
       ]
@@ -1626,9 +1626,9 @@
         "target_at_l0_any_rank": 0.8,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.1643,
-          "p95_ms": 17.5035,
-          "p99_ms": 22.2346,
+          "p50_ms": 9.4606,
+          "p95_ms": 16.8627,
+          "p99_ms": 21.0902,
           "n": 10
         }
       },
@@ -1652,7 +1652,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 23.417,
+          "latency_ms": 22.147,
           "naive_target_whole_in_context": false
         },
         {
@@ -1666,7 +1666,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.133,
+          "latency_ms": 8.467,
           "naive_target_whole_in_context": false
         },
         {
@@ -1680,7 +1680,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.24,
+          "latency_ms": 8.319,
           "naive_target_whole_in_context": false
         },
         {
@@ -1694,7 +1694,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.879,
+          "latency_ms": 9.084,
           "naive_target_whole_in_context": false
         },
         {
@@ -1708,7 +1708,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.275,
+          "latency_ms": 10.404,
           "naive_target_whole_in_context": false
         },
         {
@@ -1722,7 +1722,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.968,
+          "latency_ms": 9.837,
           "naive_target_whole_in_context": false
         },
         {
@@ -1736,7 +1736,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.45,
+          "latency_ms": 10.103,
           "naive_target_whole_in_context": false
         },
         {
@@ -1750,7 +1750,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.905,
+          "latency_ms": 10.004,
           "naive_target_whole_in_context": false
         },
         {
@@ -1764,7 +1764,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.358,
+          "latency_ms": 8.291,
           "naive_target_whole_in_context": false
         },
         {
@@ -1778,7 +1778,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.451,
+          "latency_ms": 8.296,
           "naive_target_whole_in_context": true
         }
       ]
@@ -1795,9 +1795,9 @@
         "target_at_l0_any_rank": 0.867,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.1373,
-          "p95_ms": 13.9639,
-          "p99_ms": 20.1319,
+          "p50_ms": 10.1105,
+          "p95_ms": 15.6206,
+          "p99_ms": 20.8373,
           "n": 15
         }
       },
@@ -1821,7 +1821,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 21.674,
+          "latency_ms": 22.142,
           "naive_target_whole_in_context": false
         },
         {
@@ -1835,7 +1835,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.005,
+          "latency_ms": 8.062,
           "naive_target_whole_in_context": true
         },
         {
@@ -1849,7 +1849,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.628,
+          "latency_ms": 8.691,
           "naive_target_whole_in_context": true
         },
         {
@@ -1863,7 +1863,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.821,
+          "latency_ms": 9.165,
           "naive_target_whole_in_context": false
         },
         {
@@ -1877,7 +1877,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.137,
+          "latency_ms": 10.967,
           "naive_target_whole_in_context": true
         },
         {
@@ -1891,7 +1891,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.065,
+          "latency_ms": 8.914,
           "naive_target_whole_in_context": false
         },
         {
@@ -1905,7 +1905,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.604,
+          "latency_ms": 10.619,
           "naive_target_whole_in_context": false
         },
         {
@@ -1919,7 +1919,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.66,
+          "latency_ms": 12.826,
           "naive_target_whole_in_context": false
         },
         {
@@ -1933,7 +1933,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.0,
+          "latency_ms": 9.443,
           "naive_target_whole_in_context": false
         },
         {
@@ -1947,7 +1947,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.455,
+          "latency_ms": 8.783,
           "naive_target_whole_in_context": false
         },
         {
@@ -1961,7 +1961,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.221,
+          "latency_ms": 10.941,
           "naive_target_whole_in_context": false
         },
         {
@@ -1975,7 +1975,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.625,
+          "latency_ms": 10.111,
           "naive_target_whole_in_context": true
         },
         {
@@ -1989,7 +1989,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.776,
+          "latency_ms": 11.313,
           "naive_target_whole_in_context": false
         },
         {
@@ -2003,7 +2003,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.202,
+          "latency_ms": 10.378,
           "naive_target_whole_in_context": false
         },
         {
@@ -2017,7 +2017,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.021,
+          "latency_ms": 8.619,
           "naive_target_whole_in_context": false
         }
       ]
@@ -2034,9 +2034,9 @@
         "target_at_l0_any_rank": 0.867,
         "ast_syntax_preservation": 1.0,
         "fold_latency": {
-          "p50_ms": 9.452,
-          "p95_ms": 15.0788,
-          "p99_ms": 22.0828,
+          "p50_ms": 9.4044,
+          "p95_ms": 14.2246,
+          "p99_ms": 21.0002,
           "n": 15
         }
       },
@@ -2060,7 +2060,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 23.834,
+          "latency_ms": 22.694,
           "naive_target_whole_in_context": false
         },
         {
@@ -2074,7 +2074,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.425,
+          "latency_ms": 7.945,
           "naive_target_whole_in_context": true
         },
         {
@@ -2088,7 +2088,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.481,
+          "latency_ms": 8.557,
           "naive_target_whole_in_context": true
         },
         {
@@ -2102,7 +2102,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.275,
+          "latency_ms": 9.105,
           "naive_target_whole_in_context": false
         },
         {
@@ -2116,7 +2116,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 9.057,
+          "latency_ms": 9.077,
           "naive_target_whole_in_context": true
         },
         {
@@ -2130,7 +2130,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.213,
+          "latency_ms": 9.404,
           "naive_target_whole_in_context": false
         },
         {
@@ -2144,7 +2144,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.472,
+          "latency_ms": 10.595,
           "naive_target_whole_in_context": false
         },
         {
@@ -2158,7 +2158,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 10.469,
+          "latency_ms": 10.326,
           "naive_target_whole_in_context": false
         },
         {
@@ -2172,7 +2172,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 9.452,
+          "latency_ms": 8.813,
           "naive_target_whole_in_context": false
         },
         {
@@ -2186,7 +2186,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 8.931,
+          "latency_ms": 8.122,
           "naive_target_whole_in_context": false
         },
         {
@@ -2200,7 +2200,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.722,
+          "latency_ms": 9.429,
           "naive_target_whole_in_context": false
         },
         {
@@ -2214,7 +2214,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 10.974,
+          "latency_ms": 9.803,
           "naive_target_whole_in_context": true
         },
         {
@@ -2228,7 +2228,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 11.327,
+          "latency_ms": 9.745,
           "naive_target_whole_in_context": false
         },
         {
@@ -2242,7 +2242,7 @@
           "l0_recall_at_3": false,
           "cluster_recall_at_3": false,
           "syntax_ok": true,
-          "latency_ms": 11.035,
+          "latency_ms": 9.579,
           "naive_target_whole_in_context": false
         },
         {
@@ -2256,7 +2256,7 @@
           "l0_recall_at_3": true,
           "cluster_recall_at_3": true,
           "syntax_ok": true,
-          "latency_ms": 8.593,
+          "latency_ms": 8.219,
           "naive_target_whole_in_context": false
         }
       ]
@@ -3868,9 +3868,9 @@
             6543
           ],
           "rewrite_latency": {
-            "p50_ms": 8.0736,
-            "p95_ms": 9.1442,
-            "p99_ms": 9.2332,
+            "p50_ms": 8.0651,
+            "p95_ms": 9.0629,
+            "p99_ms": 9.1453,
             "n": 4
           }
         },
@@ -3976,9 +3976,9 @@
         "tn": 10
       },
       "check_latency": {
-        "p50_ms": 0.1309,
-        "p95_ms": 0.1371,
-        "p99_ms": 0.1482,
+        "p50_ms": 0.1283,
+        "p95_ms": 0.137,
+        "p99_ms": 0.1468,
         "n": 200
       },
       "per_probe": [
@@ -4126,9 +4126,9 @@
       "chain_exact": true,
       "noise_pruned_pct": 92.5,
       "slice_latency": {
-        "p50_ms": 0.898,
-        "p95_ms": 0.917,
-        "p99_ms": 0.9196,
+        "p50_ms": 0.8661,
+        "p95_ms": 0.9076,
+        "p99_ms": 0.9273,
         "n": 50
       },
       "drift": {
@@ -4141,15 +4141,15 @@
         "fresh_values": true,
         "healed_validates": true,
         "hungarian_latency": {
-          "p50_ms": 1.0711,
-          "p95_ms": 1.4385,
-          "p99_ms": 1.6997,
+          "p50_ms": 1.0299,
+          "p95_ms": 1.0729,
+          "p99_ms": 1.0898,
           "n": 100
         },
         "alias_fastpath_latency": {
-          "p50_ms": 0.118,
-          "p95_ms": 0.1268,
-          "p99_ms": 0.1381,
+          "p50_ms": 0.1159,
+          "p95_ms": 0.1279,
+          "p99_ms": 0.1333,
           "n": 100
         }
       },
@@ -4162,106 +4162,106 @@
         "drift_strategy": "hungarian",
         "healed": true,
         "values_correct": true,
-        "wall_ms": 41.45
+        "wall_ms": 21.42
       }
     },
     "latency": {
       "bq_hamming_top50_10k": {
-        "p50_ms": 0.1326,
-        "p95_ms": 0.1487,
-        "p99_ms": 0.1593,
+        "p50_ms": 0.1271,
+        "p95_ms": 0.1392,
+        "p99_ms": 0.1456,
         "n": 500
       },
       "mrl64_cosine_top50_10k": {
-        "p50_ms": 0.0601,
-        "p95_ms": 0.0679,
-        "p99_ms": 0.106,
+        "p50_ms": 0.0594,
+        "p95_ms": 0.0652,
+        "p99_ms": 0.0692,
         "n": 500
       },
       "fts5_bm25_codebase": {
-        "p50_ms": 1.5229,
-        "p95_ms": 1.888,
-        "p99_ms": 2.017,
+        "p50_ms": 1.5011,
+        "p95_ms": 1.8833,
+        "p99_ms": 1.9575,
         "n": 200
       },
       "colbert_maxsim_rerank_48": {
-        "p50_ms": 0.0799,
-        "p95_ms": 0.1056,
-        "p99_ms": 0.1652,
+        "p50_ms": 0.0771,
+        "p95_ms": 0.0863,
+        "p99_ms": 0.0898,
         "n": 500
       },
       "hybrid_retrieval_end_to_end": {
-        "p50_ms": 5.5403,
-        "p95_ms": 6.5471,
-        "p99_ms": 7.2111,
+        "p50_ms": 5.1656,
+        "p95_ms": 6.0687,
+        "p99_ms": 6.3236,
         "n": 200
       },
       "ast_mipmap_per_file_cold": {
-        "p50_ms": 4.1193,
-        "p95_ms": 5.3494,
-        "p99_ms": 5.7428,
+        "p50_ms": 3.9622,
+        "p95_ms": 4.8283,
+        "p99_ms": 5.3072,
         "n": 150
       },
       "ast_mipmap_largest_file": {
         "path": "ledgerline/payments/currency.py",
         "tokens": 4790,
-        "p50_ms": 5.5077,
-        "p95_ms": 6.3246,
-        "p99_ms": 6.4368,
+        "p50_ms": 4.8692,
+        "p95_ms": 5.0942,
+        "p99_ms": 5.1837,
         "n": 20
       },
       "fold_pipeline_warm_16k_tokens": {
-        "p50_ms": 7.8579,
-        "p95_ms": 9.0692,
-        "p99_ms": 9.7821,
+        "p50_ms": 7.212,
+        "p95_ms": 8.3674,
+        "p99_ms": 8.5899,
         "n": 100
       },
       "proxy_rewrite_turn_warm": {
-        "p50_ms": 5.2475,
-        "p95_ms": 6.2143,
-        "p99_ms": 6.4728,
+        "p50_ms": 4.8951,
+        "p95_ms": 5.6744,
+        "p99_ms": 6.0131,
         "n": 95
       },
       "proxy_rewrite_first_sight_cold": {
-        "p50_ms": 9.7395,
-        "p95_ms": 11.6228,
-        "p99_ms": 12.2109,
+        "p50_ms": 8.8303,
+        "p95_ms": 10.0656,
+        "p99_ms": 10.7334,
         "n": 90
       },
       "file_ingest_cold": {
-        "p50_ms": 4.5028,
-        "p95_ms": 16.6094,
-        "p99_ms": 18.6192,
+        "p50_ms": 4.0811,
+        "p95_ms": 14.6205,
+        "p99_ms": 16.3548,
         "n": 90
       },
       "proxy_rewrite_first_sight_cold_cpu": {
-        "p50_ms": 9.753,
-        "p95_ms": 11.625,
-        "p99_ms": 12.4083,
+        "p50_ms": 8.8835,
+        "p95_ms": 10.0818,
+        "p99_ms": 10.7504,
         "n": 90
       },
       "file_ingest_cold_cpu": {
-        "p50_ms": 4.6745,
-        "p95_ms": 17.6016,
-        "p99_ms": 21.8164,
+        "p50_ms": 4.208,
+        "p95_ms": 15.3914,
+        "p99_ms": 20.1004,
         "n": 90
       },
       "cold_file_tokens_mean": 3759.1,
       "hungarian_self_heal": {
-        "p50_ms": 1.065,
-        "p95_ms": 1.3372,
-        "p99_ms": 1.5211,
+        "p50_ms": 1.0201,
+        "p95_ms": 1.0797,
+        "p99_ms": 1.1049,
         "n": 200
       },
-      "embedding_throughput_docs_per_s": 14603.0,
+      "embedding_throughput_docs_per_s": 16087.3,
       "embedding_doc_tokens_mean": 173.2,
-      "embedding_throughput_whole_files_per_s": 983.7
+      "embedding_throughput_whole_files_per_s": 1037.8
     }
   },
   "load_avg_end": [
-    7.16,
-    39.26,
-    62.74
+    3.34,
+    6.64,
+    16.63
   ],
   "compliance": [
     {
@@ -4350,44 +4350,44 @@
     },
     {
       "target": "Warm fold pipeline p95 < 10 ms",
-      "measured": "9.07 ms",
-      "value": 9.0692,
+      "measured": "8.37 ms",
+      "value": 8.3674,
       "pass": true
     },
     {
       "target": "Warm proxy rewrite p95 < 10 ms",
-      "measured": "6.21 ms",
-      "value": 6.2143,
+      "measured": "5.67 ms",
+      "value": 5.6744,
       "pass": true
     },
     {
       "target": "Cold first-sight proxy rewrite p95 < 10 ms",
-      "measured": "11.62 ms",
-      "value": 11.6228,
+      "measured": "10.07 ms",
+      "value": 10.0656,
       "pass": false
     },
     {
       "target": "Cold per-file ingest p95 < 10 ms",
-      "measured": "16.61 ms",
-      "value": 16.6094,
+      "measured": "14.62 ms",
+      "value": 14.6205,
       "pass": false
     },
     {
       "target": "Cold first-sight rewrite, CPU-time p95 < 10 ms",
-      "measured": "11.62 ms",
-      "value": 11.625,
+      "measured": "10.08 ms",
+      "value": 10.0818,
       "pass": false
     },
     {
       "target": "1-bit Hamming over 10k vectors < 0.5 ms (p95)",
-      "measured": "0.149 ms",
-      "value": 0.1487,
+      "measured": "0.139 ms",
+      "value": 0.1392,
       "pass": true
     },
     {
       "target": "Embedding > 2,000 docs/s",
-      "measured": "14,603/s",
-      "value": 14603.0,
+      "measured": "16,087/s",
+      "value": 16087.3,
       "pass": true
     },
     {
@@ -4404,10 +4404,10 @@
     },
     {
       "target": "Self-healing < 3 ms (p95)",
-      "measured": "1.44 ms",
-      "value": 1.4385,
+      "measured": "1.07 ms",
+      "value": 1.0729,
       "pass": true
     }
   ],
-  "suite_seconds": 12.15
+  "suite_seconds": 11.22
 }

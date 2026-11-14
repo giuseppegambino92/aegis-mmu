@@ -1,0 +1,409 @@
+{
+  "runs": [
+    {
+      "generated_at": "2026-11-14 00:52 UTC",
+      "load_avg_start": [
+        4.0,
+        7.16,
+        17.23
+      ],
+      "load_avg_end": [
+        3.69,
+        6.99,
+        17.05
+      ],
+      "compliance": [
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid (nomic-embed-text)",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid",
+          "measured": "80%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, Neural Hybrid (nomic-embed-text)",
+          "measured": "70%",
+          "pass": false
+        },
+        {
+          "target": "Token reduction > 75%",
+          "measured": "89.1%",
+          "pass": true
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "60%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Target at full L0 anywhere in context >= 90% \u2014 blind held-out v5, FastLocal (not a top-3 metric)",
+          "measured": "87%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, FastLocal 0-dep",
+          "measured": "50%",
+          "pass": false
+        },
+        {
+          "target": "AST syntax preservation = 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "L1 ~25% of L0 (accept <= 30%)",
+          "measured": "22.9%",
+          "pass": true
+        },
+        {
+          "target": "L2 ~6% of file (accept <= 8%)",
+          "measured": "7.9%",
+          "pass": true
+        },
+        {
+          "target": "L3 ~1-2% of file (accept <= 2%)",
+          "measured": "0.66%",
+          "pass": true
+        },
+        {
+          "target": "KV prefix hit > 85% (context block, stable-prefix policy)",
+          "measured": "89.5%",
+          "pass": true
+        },
+        {
+          "target": "Standard RAG prefix hit < 25% (baseline sanity)",
+          "measured": "0.1%",
+          "pass": true
+        },
+        {
+          "target": "Warm fold pipeline p95 < 10 ms",
+          "measured": "8.35 ms",
+          "pass": true
+        },
+        {
+          "target": "Warm proxy rewrite p95 < 10 ms",
+          "measured": "5.71 ms",
+          "pass": true
+        },
+        {
+          "target": "Cold first-sight proxy rewrite p95 < 10 ms",
+          "measured": "10.05 ms",
+          "pass": false
+        },
+        {
+          "target": "Cold per-file ingest p95 < 10 ms",
+          "measured": "14.62 ms",
+          "pass": false
+        },
+        {
+          "target": "Cold first-sight rewrite, CPU-time p95 < 10 ms",
+          "measured": "10.07 ms",
+          "pass": false
+        },
+        {
+          "target": "1-bit Hamming over 10k vectors < 0.5 ms (p95)",
+          "measured": "0.140 ms",
+          "pass": true
+        },
+        {
+          "target": "Embedding > 2,000 docs/s",
+          "measured": "15,778/s",
+          "pass": true
+        },
+        {
+          "target": "HAR minimal chain exact",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Drift recovery 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Self-healing < 3 ms (p95)",
+          "measured": "1.10 ms",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "generated_at": "2026-11-14 00:53 UTC",
+      "load_avg_start": [
+        3.69,
+        6.99,
+        17.05
+      ],
+      "load_avg_end": [
+        3.31,
+        6.75,
+        16.79
+      ],
+      "compliance": [
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid (nomic-embed-text)",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid",
+          "measured": "80%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, Neural Hybrid (nomic-embed-text)",
+          "measured": "70%",
+          "pass": false
+        },
+        {
+          "target": "Token reduction > 75%",
+          "measured": "89.1%",
+          "pass": true
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "60%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Target at full L0 anywhere in context >= 90% \u2014 blind held-out v5, FastLocal (not a top-3 metric)",
+          "measured": "87%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, FastLocal 0-dep",
+          "measured": "50%",
+          "pass": false
+        },
+        {
+          "target": "AST syntax preservation = 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "L1 ~25% of L0 (accept <= 30%)",
+          "measured": "22.9%",
+          "pass": true
+        },
+        {
+          "target": "L2 ~6% of file (accept <= 8%)",
+          "measured": "7.9%",
+          "pass": true
+        },
+        {
+          "target": "L3 ~1-2% of file (accept <= 2%)",
+          "measured": "0.66%",
+          "pass": true
+        },
+        {
+          "target": "KV prefix hit > 85% (context block, stable-prefix policy)",
+          "measured": "89.5%",
+          "pass": true
+        },
+        {
+          "target": "Standard RAG prefix hit < 25% (baseline sanity)",
+          "measured": "0.1%",
+          "pass": true
+        },
+        {
+          "target": "Warm fold pipeline p95 < 10 ms",
+          "measured": "8.31 ms",
+          "pass": true
+        },
+        {
+          "target": "Warm proxy rewrite p95 < 10 ms",
+          "measured": "5.39 ms",
+          "pass": true
+        },
+        {
+          "target": "Cold first-sight proxy rewrite p95 < 10 ms",
+          "measured": "9.98 ms",
+          "pass": true
+        },
+        {
+          "target": "Cold per-file ingest p95 < 10 ms",
+          "measured": "14.50 ms",
+          "pass": false
+        },
+        {
+          "target": "Cold first-sight rewrite, CPU-time p95 < 10 ms",
+          "measured": "10.04 ms",
+          "pass": false
+        },
+        {
+          "target": "1-bit Hamming over 10k vectors < 0.5 ms (p95)",
+          "measured": "0.144 ms",
+          "pass": true
+        },
+        {
+          "target": "Embedding > 2,000 docs/s",
+          "measured": "15,610/s",
+          "pass": true
+        },
+        {
+          "target": "HAR minimal chain exact",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Drift recovery 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Self-healing < 3 ms (p95)",
+          "measured": "1.08 ms",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "generated_at": "2026-11-14 00:53 UTC",
+      "load_avg_start": [
+        3.31,
+        6.75,
+        16.79
+      ],
+      "load_avg_end": [
+        3.34,
+        6.64,
+        16.63
+      ],
+      "compliance": [
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid (nomic-embed-text)",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, Neural Hybrid",
+          "measured": "80%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, Neural Hybrid (nomic-embed-text)",
+          "measured": "70%",
+          "pass": false
+        },
+        {
+          "target": "Token reduction > 75%",
+          "measured": "89.1%",
+          "pass": true
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "60%",
+          "pass": false
+        },
+        {
+          "target": "Call-cluster L0 Recall@3 >= 90% \u2014 blind held-out v5, FastLocal 0-dep",
+          "measured": "67%",
+          "pass": false
+        },
+        {
+          "target": "Target at full L0 anywhere in context >= 90% \u2014 blind held-out v5, FastLocal (not a top-3 metric)",
+          "measured": "87%",
+          "pass": false
+        },
+        {
+          "target": "L0 Recall@3 >= 90% \u2014 dev, FastLocal 0-dep",
+          "measured": "50%",
+          "pass": false
+        },
+        {
+          "target": "AST syntax preservation = 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "L1 ~25% of L0 (accept <= 30%)",
+          "measured": "22.9%",
+          "pass": true
+        },
+        {
+          "target": "L2 ~6% of file (accept <= 8%)",
+          "measured": "7.9%",
+          "pass": true
+        },
+        {
+          "target": "L3 ~1-2% of file (accept <= 2%)",
+          "measured": "0.66%",
+          "pass": true
+        },
+        {
+          "target": "KV prefix hit > 85% (context block, stable-prefix policy)",
+          "measured": "89.5%",
+          "pass": true
+        },
+        {
+          "target": "Standard RAG prefix hit < 25% (baseline sanity)",
+          "measured": "0.1%",
+          "pass": true
+        },
+        {
+          "target": "Warm fold pipeline p95 < 10 ms",
+          "measured": "8.37 ms",
+          "pass": true
+        },
+        {
+          "target": "Warm proxy rewrite p95 < 10 ms",
+          "measured": "5.67 ms",
+          "pass": true
+        },
+        {
+          "target": "Cold first-sight proxy rewrite p95 < 10 ms",
+          "measured": "10.07 ms",
+          "pass": false
+        },
+        {
+          "target": "Cold per-file ingest p95 < 10 ms",
+          "measured": "14.62 ms",
+          "pass": false
+        },
+        {
+          "target": "Cold first-sight rewrite, CPU-time p95 < 10 ms",
+          "measured": "10.08 ms",
+          "pass": false
+        },
+        {
+          "target": "1-bit Hamming over 10k vectors < 0.5 ms (p95)",
+          "measured": "0.139 ms",
+          "pass": true
+        },
+        {
+          "target": "Embedding > 2,000 docs/s",
+          "measured": "16,087/s",
+          "pass": true
+        },
+        {
+          "target": "HAR minimal chain exact",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Drift recovery 100%",
+          "measured": "100%",
+          "pass": true
+        },
+        {
+          "target": "Self-healing < 3 ms (p95)",
+          "measured": "1.07 ms",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
