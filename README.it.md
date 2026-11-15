@@ -2,6 +2,8 @@
 
 [English](README.md) · **Italiano**
 
+<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_donateCC_LG.gif" alt="Fai una donazione con PayPal"></a>
+
 **Una memory-management unit semantica per agenti di coding basati su AI.** Un proxy drop-in che comprime (fold) il tuo codebase in una vista multi-risoluzione con budget di token in pochi millisecondi, mantiene calda la prompt cache nel farlo, ricorda ciò che è fallito in precedenza e trasforma le catture del traffico del browser in tool MCP auto-riparanti.
 
 ![tests](https://img.shields.io/badge/tests-95-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue) ![offline](https://img.shields.io/badge/runs-100%25%20offline-informational) ![frameworks](https://img.shields.io/badge/LangChain%2FLlamaIndex-none-lightgrey)
@@ -621,3 +623,9 @@ tests/                      95 tests: math, mipmapper (5 languages), retrieval b
 ```
 
 La configurazione risiede nelle variabili d'ambiente `AEGIS_*`, ad esempio `AEGIS_TOKEN_BUDGET`, `AEGIS_BUDGET_RATIO`, `AEGIS_EMBEDDING_PROVIDER=ollama`, `AEGIS_NEGATIVE_THRESHOLD`, `AEGIS_REPO_PAGE_IN=true` e `AEGIS_DB_PATH`. Vedi [`config.py`](src/aegis_mmu/config.py).
+
+## Supporta il progetto
+
+Se questo progetto ti è utile, puoi sostenerne lo sviluppo con una donazione su PayPal:
+
+<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_donateCC_LG.gif" alt="Fai una donazione con PayPal"></a>
