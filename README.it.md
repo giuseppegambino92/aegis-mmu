@@ -6,7 +6,7 @@
 
 **Una memory-management unit semantica per agenti di coding basati su AI.** Un proxy drop-in che comprime (fold) il tuo codebase in una vista multi-risoluzione con budget di token in pochi millisecondi, mantiene calda la prompt cache nel farlo, ricorda ciò che è fallito in precedenza e trasforma le catture del traffico del browser in tool MCP auto-riparanti.
 
-![tests](https://img.shields.io/badge/tests-95-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue) ![offline](https://img.shields.io/badge/runs-100%25%20offline-informational) ![frameworks](https://img.shields.io/badge/LangChain%2FLlamaIndex-none-lightgrey)
+![tests](https://img.shields.io/badge/tests-107-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue) ![offline](https://img.shields.io/badge/runs-100%25%20offline-informational) ![frameworks](https://img.shields.io/badge/LangChain%2FLlamaIndex-none-lightgrey)
 
 ```
 Claude Code / Cursor / Codex ──► aegis proxy :8787 ──► Anthropic / OpenAI / Ollama
@@ -17,6 +17,28 @@ Claude Code / Cursor / Codex ──► aegis proxy :8787 ──► Anthropic / O
 ```
 
 Niente LangChain, niente LlamaIndex, niente vector DB. La matematica del retrieval (slicing Matryoshka, quantizzazione a 1 bit, RRF, ColBERT MaxSim, allocazione knapsack, matching ungherese) è scritta direttamente in NumPy/SciPy sopra SQLite (WAL + FTS5). Con l'embedder predefinito gira completamente offline e in modo deterministico, senza API key.
+
+---
+
+## Screenshot
+
+Catture reali del terminale di comandi `aegis` eseguiti sui dati demo inclusi (`evals/datasets`), registrate con `Console(record=True)` di Rich ed esportate in SVG. `python scripts/make_screenshots.py` le rigenera tutte, in italiano (`docs/images/it/`) e in inglese (`docs/images/en/`), con l'embedder offline e uno store temporaneo nuovo per ogni comando. I tempi sono misurati dal vivo su una macchina condivisa e cambiano da un'esecuzione all'altra.
+
+**Dashboard**: `aegis --lang it dash --demo --once`. Un frame dopo la demo inclusa (memorie Negative RAG, una sessione agente di 5 turni attraverso il rewriter del proxy, fold del codebase demo, un harvest HAR e un healing di drift). In alto: richieste, token risparmiati, hit rate medio del prefisso KV, latenza p50/p95. A sinistra: il livello di mipmap di ogni file (█ L0 completo, ▓ L1 scheletro, ░ L2/L3 ripiegato) e la rimappatura ungherese dei campi con le relative confidenze. A destra: hit rate della prefix cache per turno e gli anti-pattern richiamati.
+
+![aegis --lang it dash --demo --once](docs/images/it/dashboard.svg)
+
+**Fold**: `aegis --lang it fold evals/datasets/codebase/ledgerline/payments/refunds.py -q "refunds for partially shipped JPY orders are one cent short"`. L'unità che contiene il bug, `RefundCalculator.compute_refund`, resta integrale a L0, `_lock_for` scende a L1 e tutto il resto è ripiegato alle sole firme (L2). Ogni marker `[~aegis:<vec_id>~]` si può ripristinare con `aegis expand <vec_id>`. L'ultima riga riporta la riduzione di token e la latenza della pipeline.
+
+![aegis fold su refunds.py](docs/images/it/fold.svg)
+
+**HAR → tool MCP**: `aegis --lang it harvest evals/datasets/skyfare.har --target price_eur --name skyfare_flight_search`. Il backward taint slicing tiene le 3 richieste da cui dipende `price_eur` (token CSRF → sessione → ricerca) e scarta come rumore le altre 37 su 40. La password diventa un input segreto letto da una variabile d'ambiente e il tool viene registrato per il server MCP.
+
+![aegis harvest su skyfare.har](docs/images/it/harvest.svg)
+
+**Self-healing dello schema**: `aegis --lang it heal skyfare_flight_search evals/datasets/flight_v2_drift.json`. La risposta v2 ha rinominato e ristrutturato i campi. L'assegnamento ungherese associa ogni path atteso alla sua controparte dopo il drift (`conf` combina la similarità di nome, valore e struttura), poi stampa il payload riscritto secondo il contratto originale. Quel JSON è output machine-readable e non viene mai tradotto.
+
+![aegis heal su un payload con drift](docs/images/it/heal.svg)
 
 ---
 
@@ -177,10 +199,21 @@ git clone <this repo> && cd aegis-mmu
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest                                   # 95 tests (1 skipped without Ollama), ~4 s
+pytest                                   # 107 tests (1 skipped without Ollama), ~4 s
 python -m evals.benchmark_suite          # regenerates evals/latest_report.{json,md}
 aegis dash --demo --once                 # dashboard over the bundled demo
+python scripts/make_screenshots.py       # regenerates docs/images/{en,it}/*.svg from real runs
 ```
+
+**Lingua dell'output (italiano / inglese)**
+
+```bash
+aegis --lang it dash --demo --once       # one command in Italian
+export AEGIS_LANG=it                     # or every command; --lang wins over AEGIS_LANG
+aegis --lang it fold --help              # --help texts are translated too
+```
+
+`--lang en|it` (oppure `AEGIS_LANG`) sceglie la lingua dell'output leggibile: messaggi di stato, titoli e intestazioni delle tabelle, la dashboard e le descrizioni di `--help`. Il default è l'inglese; `--lang` ha la precedenza su `AEGIS_LANG`. L'output machine-readable non viene mai tradotto: `--json`, `aegis stats`, i payload MCP e del proxy, i blocchi Negative RAG iniettati nei prompt, i client generati e il report dei benchmark. Restano in inglese anche le stringhe proprie di Typer (`Usage`, `Options`, `[required]`, errori di parsing).
 
 **Fold di un codebase per un task**
 
@@ -603,6 +636,7 @@ Embedding throughput (FastLocalEngine, single core): **16,087 code units/s** (me
 ```
 src/aegis_mmu/
   config.py                 settings (AEGIS_* env vars)
+  i18n.py                   English / Italian message catalog for CLI + dashboard output (--lang, AEGIS_LANG)
   runtime.py                serving-process GC policy
   tokens.py                 token counting, LCP / KV hit rate
   db/schema.py, store.py    SQLite WAL + FTS5 + vector blobs + numpy mirrors
@@ -619,10 +653,11 @@ evals/
   datasets/                 codebase/ (expanded), codebase_v1/ (original), queries.json (dev),
                             queries_heldout.json (blind), session.json, negative_rag.json,
                             skyfare.har (+ generate_fixtures.py), flight_v1/v2 json, skyfare_server.py
-tests/                      95 tests: math, mipmapper (5 languages), retrieval bridging, pipeline, harvester/healer, proxy+MCP
+tests/                      107 tests: math, mipmapper (5 languages), retrieval bridging, pipeline, harvester/healer, proxy+MCP, CLI i18n
+scripts/make_screenshots.py regenerates the README screenshots (docs/images/{en,it}/*.svg) from real CLI runs
 ```
 
-La configurazione risiede nelle variabili d'ambiente `AEGIS_*`, ad esempio `AEGIS_TOKEN_BUDGET`, `AEGIS_BUDGET_RATIO`, `AEGIS_EMBEDDING_PROVIDER=ollama`, `AEGIS_NEGATIVE_THRESHOLD`, `AEGIS_REPO_PAGE_IN=true` e `AEGIS_DB_PATH`. Vedi [`config.py`](src/aegis_mmu/config.py).
+La configurazione risiede nelle variabili d'ambiente `AEGIS_*`, ad esempio `AEGIS_TOKEN_BUDGET`, `AEGIS_BUDGET_RATIO`, `AEGIS_EMBEDDING_PROVIDER=ollama`, `AEGIS_NEGATIVE_THRESHOLD`, `AEGIS_REPO_PAGE_IN=true`, `AEGIS_DB_PATH` e `AEGIS_LANG=it` (output della CLI in italiano). Vedi [`config.py`](src/aegis_mmu/config.py).
 
 ## Supporta il progetto
 
