@@ -2,11 +2,39 @@
 
 [English](README.md) · **Italiano**
 
-<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_donateCC_LG.gif" alt="Fai una donazione con PayPal"></a>
+**Gli agenti AI per il coding spesso mettono nel prompt file interi quando al compito serve una
+sola funzione. aegis-mmu è un proxy locale che invece manda loro una vista ridotta del codice: ciò che
+serve al compito per intero, il resto come firme da espandere su richiesta.**
 
-**Una memory-management unit semantica per agenti di coding basati su AI.** Un proxy drop-in che comprime (fold) il tuo codebase in una vista multi-risoluzione con budget di token in pochi millisecondi, mantiene calda la prompt cache nel farlo, ricorda ciò che è fallito in precedenza e trasforma le catture del traffico del browser in tool MCP auto-riparanti.
+Ci colleghi Claude Code, Cursor o un altro client compatibile con OpenAI impostando
+`ANTHROPIC_BASE_URL` o `OPENAI_BASE_URL`. Le richieste passano attraverso il proxy e il codice
+che contengono viene compresso lungo la strada. Il proxy aggiunge solo in coda al prompt, quindi
+la prompt cache del provider continua a funzionare. Inoltre ricorda gli approcci già falliti e li
+segnala all'agente, e può trasformare una cattura del traffico del browser (HAR) in un tool MCP
+che si adatta quando la risposta dell'API cambia forma.
 
-![tests](https://img.shields.io/badge/tests-107-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue) ![offline](https://img.shields.io/badge/runs-100%25%20offline-informational) ![frameworks](https://img.shields.io/badge/LangChain%2FLlamaIndex-none-lightgrey)
+Gira in locale su SQLite e NumPy, senza API key proprie. È un progetto di ricerca sperimentale: il
+retrieval manca ancora alcuni obiettivi e l'inoltro verso i veri endpoint di Anthropic e OpenAI
+non è ancora stato verificato. Vedi
+[Limitazioni e avvertenze oneste](#limitazioni-e-avvertenze-oneste).
+
+## Provalo in 30 secondi
+
+```bash
+git clone https://github.com/giuseppegambino92/aegis-mmu.git && cd aegis-mmu
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+
+# comprime un file attorno a una segnalazione di bug: la funzione rilevante resta intera, il resto diventa firme
+aegis fold evals/datasets/codebase/ledgerline/payments/refunds.py -q "refunds for partially shipped JPY orders are one cent short"
+aegis dash --demo --once                 # dashboard sulla demo inclusa
+```
+
+aegis-mmu non è su PyPI; installalo da un clone come sopra.
+
+## Cosa c'è dentro
+
+In termini tecnici: **una memory-management unit semantica per agenti di coding basati su AI.**
 
 ```
 Claude Code / Cursor / Codex ──► aegis proxy :8787 ──► Anthropic / OpenAI / Ollama
@@ -195,7 +223,7 @@ flowchart LR
 ## Avvio rapido
 
 ```bash
-git clone <this repo> && cd aegis-mmu
+git clone https://github.com/giuseppegambino92/aegis-mmu.git && cd aegis-mmu
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 

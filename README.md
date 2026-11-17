@@ -2,11 +2,38 @@
 
 **English** · [Italiano](README.it.md)
 
-<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal"></a>
+**AI coding agents often put whole files into the prompt when the task needs one function.
+aegis-mmu is a local proxy that sends them a trimmed view of your code instead: what matters for the task in full, the
+rest as signatures they can expand on demand.**
 
-**A semantic memory-management unit for AI coding agents.** A drop-in proxy that folds your codebase into a multi-resolution, token-budgeted view in single-digit milliseconds, keeps your prompt cache warm while doing it, remembers what failed before, and turns browser traffic captures into self-healing MCP tools.
+You point Claude Code, Cursor or another OpenAI-compatible client at it by setting
+`ANTHROPIC_BASE_URL` or `OPENAI_BASE_URL`. Requests pass through, and the code inside them is
+folded on the way. It only appends to the prompt, so the provider's prompt cache keeps hitting. It
+also remembers approaches that failed before and warns the agent, and can turn a browser traffic
+capture (HAR) into an MCP tool that adapts when the API response changes shape.
 
-![tests](https://img.shields.io/badge/tests-107-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue) ![offline](https://img.shields.io/badge/runs-100%25%20offline-informational) ![frameworks](https://img.shields.io/badge/LangChain%2FLlamaIndex-none-lightgrey)
+It runs locally on SQLite and NumPy, with no API key of its own. It is an experimental research
+project: retrieval still misses some targets, and forwarding to the real Anthropic and OpenAI
+endpoints has not been verified yet. See
+[Limitations & honest caveats](#limitations--honest-caveats).
+
+## Try it in 30 seconds
+
+```bash
+git clone https://github.com/giuseppegambino92/aegis-mmu.git && cd aegis-mmu
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+
+# fold one file around a bug report: the relevant function stays verbatim, the rest becomes signatures
+aegis fold evals/datasets/codebase/ledgerline/payments/refunds.py -q "refunds for partially shipped JPY orders are one cent short"
+aegis dash --demo --once                 # dashboard over the bundled demo
+```
+
+aegis-mmu is not on PyPI; install it from a clone as above.
+
+## What's inside
+
+In technical terms: **a semantic memory-management unit for AI coding agents.**
 
 ```
 Claude Code / Cursor / Codex ──► aegis proxy :8787 ──► Anthropic / OpenAI / Ollama
@@ -195,7 +222,7 @@ flowchart LR
 ## Quickstart
 
 ```bash
-git clone <this repo> && cd aegis-mmu
+git clone https://github.com/giuseppegambino92/aegis-mmu.git && cd aegis-mmu
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
