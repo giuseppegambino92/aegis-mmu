@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import json
+import os
 import time
 
 import httpx
@@ -171,7 +172,9 @@ def test_hungarian_recovers_all_drifted_fields_under_3ms(healer):
     assert rep.healed and not rep.unresolved
     assert h.validate(healed, shadow) == []
     assert len(healed["data"]["flights"]) == 2
-    assert np.median(lat) < 3.0, f"median {np.median(lat):.2f} ms"
+    # 3 ms is the budget on a developer machine; shared CI runners set AEGIS_LATENCY_LIMIT_MS higher.
+    limit = float(os.environ.get("AEGIS_LATENCY_LIMIT_MS", "3.0"))
+    assert np.median(lat) < limit, f"median {np.median(lat):.2f} ms (limit {limit} ms)"
 
 
 def test_no_drift_fast_path(healer):

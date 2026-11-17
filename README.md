@@ -2,6 +2,8 @@
 
 **English** · [Italiano](README.it.md)
 
+[![CI](https://github.com/giuseppegambino92/aegis-mmu/actions/workflows/ci.yml/badge.svg)](https://github.com/giuseppegambino92/aegis-mmu/actions/workflows/ci.yml) ![python](https://img.shields.io/badge/python-3.10%2B-3776AB) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **AI coding agents often put whole files into the prompt when the task needs one function.
 aegis-mmu is a local proxy that sends them a trimmed view of your code instead: what matters for the task in full, the
 rest as signatures they can expand on demand.**
@@ -224,7 +226,7 @@ flowchart LR
 ```bash
 git clone https://github.com/giuseppegambino92/aegis-mmu.git && cd aegis-mmu
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+pip install -e ".[dev,tiktoken]"            # the test suite expects exact tiktoken counts
 
 pytest                                   # 107 tests (1 skipped without Ollama), ~4 s
 python -m evals.benchmark_suite          # regenerates evals/latest_report.{json,md}

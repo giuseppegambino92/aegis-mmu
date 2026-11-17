@@ -95,7 +95,9 @@ def line_prefix(text: str):
     lines = text.split("\n")
     enc = _tiktoken_encoder()
     if enc is None or not text:
+        # +1 per line for its newline token; the last line has no newline after it.
         counts = np.fromiter((_heuristic(ln) + 1 for ln in lines), dtype=np.int64, count=len(lines))
+        counts[-1] -= 1
     else:
         data = text.encode("utf-8")
         toks = np.asarray(enc.encode_ordinary(text), dtype=np.int64)
