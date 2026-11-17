@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import math
 import re
 import threading
@@ -22,6 +23,8 @@ from ..embeddings.colbert import decode_token_matrix, encode_token_matrix
 from ..embeddings.lexicon import STOPWORDS, expand_term, stem, subword_tokens
 from ..embeddings.matryoshka import binary_quantize, cosine_topk, hamming_topk, mrl_slice
 from .schema import connect, migrate
+
+_log = logging.getLogger(__name__)
 
 _COMMON_NAMES = frozenset({"get", "set", "run", "main", "init", "new", "update", "load", "save", "apply",
                            "build", "create", "close", "open", "start", "stop", "reset", "clear", "handle", "process"})
@@ -737,22 +740,24 @@ class _WriteBehind:
                     batch.append(self.q.get_nowait())
                 except queue.Empty:
                     break
-            stop = False
+            stop = any(it is None for it in batch)
+            stmts = [it for it in batch if it is not None and not isinstance(it, threading.Event)]
             try:
                 conn.execute("BEGIN")
-                for it in batch:
-                    if it is None:
-                        stop = True
-                    elif isinstance(it, threading.Event):
-                        continue
-                    else:
-                        conn.execute(it[0], it[1])
+                for sql, params in stmts:
+                    conn.execute(sql, params)
                 conn.execute("COMMIT")
             except Exception:  # noqa: BLE001 - never let bookkeeping take the proxy down
                 try:
                     conn.execute("ROLLBACK")
                 except Exception:  # noqa: BLE001
                     pass
+                # Replay one by one (autocommit) so a single bad statement does not drop the whole batch.
+                for sql, params in stmts:
+                    try:
+                        conn.execute(sql, params)
+                    except Exception:  # noqa: BLE001
+                        _log.warning("write-behind statement failed: %.80s", sql, exc_info=True)
             for it in batch:
                 if isinstance(it, threading.Event):
                     it.set()
