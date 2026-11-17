@@ -22,7 +22,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from .self_healer import ContractShadow, SchemaDriftReport, SchemaHealer, build_shadow
-from .taint_graph import MinimalChain, TaintGraph, Txn, flatten_json, last_key
+from .taint_graph import MinimalChain, TaintGraph
 
 SECRET_RE = re.compile(r"(pass(word|wd)?|secret|api[_-]?key|otp|pin|private[_-]?key|client[_-]?secret)$", re.I)
 KEEP_HEADERS = {"accept", "content-type", "authorization", "origin"}

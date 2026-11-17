@@ -66,7 +66,6 @@ def equalizer_panel(fold_event: dict | None, width: int = 26) -> Panel:
     for f in p.get("files", []):
         units = max(1, f.get("units", 1))
         l0, l1 = f.get("l0", 0), f.get("l1", 0)
-        rest = max(0, units - l0 - l1)
         w0, w1 = int(round(width * l0 / units)), int(round(width * l1 / units))
         bar = Text("█" * w0, style=LEVEL_STYLE["L0"]) + Text("▓" * w1, style=LEVEL_STYLE["L1"]) + \
             Text("░" * max(0, width - w0 - w1), style=LEVEL_STYLE[f"L{f.get('skeleton', 3)}"])

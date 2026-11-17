@@ -117,7 +117,6 @@ class SemanticPager:
         st.turn += 1
         resident = [Page(**p) for p in st.pages]
         by_key = {p.key: p for p in resident}
-        want = {r.key: r for r in requests}
         appended: list[str] = []
         promoted: list[str] = []
 

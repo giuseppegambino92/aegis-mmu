@@ -4,7 +4,6 @@ composite indexing document and the dense-cosine term of the final score."""
 import numpy as np
 import pytest
 
-from aegis_mmu.config import AegisSettings
 from aegis_mmu.db.store import AegisStore
 from aegis_mmu.embeddings.providers import EmbeddingCache, OllamaEngine
 from aegis_mmu.mmu.pipeline import SemanticMMU

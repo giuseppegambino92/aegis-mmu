@@ -36,9 +36,7 @@ from aegis_mmu.embeddings.providers import FastLocalEngine  # noqa: E402
 from aegis_mmu.harvester.self_healer import ContractShadow, SchemaHealer, build_shadow  # noqa: E402
 from aegis_mmu.harvester.synthesizer import ToolRuntime, synthesize  # noqa: E402
 from aegis_mmu.harvester.taint_graph import extract_minimal_chain  # noqa: E402
-from aegis_mmu.mmu.allocator import compute_budget  # noqa: E402
-from aegis_mmu.mmu.ast_mipmapper import brace_balanced, mipmap_file, syntax_ok  # noqa: E402
-from aegis_mmu.mmu.kv_paginator import render_context  # noqa: E402
+from aegis_mmu.mmu.ast_mipmapper import brace_balanced, mipmap_file  # noqa: E402
 from aegis_mmu.mmu.pipeline import SemanticMMU  # noqa: E402
 from aegis_mmu.mmu.prompt_codec import prompt_text  # noqa: E402
 from aegis_mmu.runtime import tune_gc  # noqa: E402
@@ -633,7 +631,7 @@ def to_markdown(r: dict) -> str:
     s1, s2, s3, s4, s5 = (r["scenarios"][k] for k in ("compression", "kv_cache", "negative_rag", "harvest", "latency"))
     a, n = s1["aegis"], s1["naive_rag"]
     comp = r["compliance"]
-    out = [f"# aegis-mmu benchmark report\n",
+    out = ["# aegis-mmu benchmark report\n",
            f"_{r['generated_at']} · {r['machine']} · {r['cpu_count']} CPUs · load avg start {r['load_avg_start'][0]} / end "
            f"{r['load_avg_end'][0]} · tokenizer: {r['tokenizer']} · engine: {r['engine']}_\n",
            f"## Target compliance ({sum(c['pass'] for c in comp)}/{len(comp)} pass)", "",
@@ -727,7 +725,7 @@ def to_markdown(r: dict) -> str:
             "Per turn (full conversation, aegis): hit " + " → ".join(f"{x * 100:.1f}%" for x in c["aegis"]["kv_hit_rate_per_turn"]) +
             " · append-only optimum " + " → ".join(f"{x * 100:.1f}%" for x in c["aegis"]["append_only_optimum_per_turn"]),
             "", "Per turn (full conversation, standard RAG): hit " + " → ".join(f"{x * 100:.1f}%" for x in c["standard_rag"]["kv_hit_rate_per_turn"]), "",
-            f"## 3 · Negative RAG regression prevention", "",
+            "## 3 · Negative RAG regression prevention", "",
             f"{s3['memories']} recorded anti-patterns (race condition, memory leak, deprecated API, SQL injection, N+1), {s3['probes']} probes (10 positive, 10 negative). "
             f"Threshold {s3['threshold']} — self-calibrated: {s3['calibration']['source'] if s3.get('calibration') else 'explicit'}"
             + (f", null mean {s3['calibration']['null_mean']} + {s3['calibration']['z']:.0f} × std {s3['calibration']['null_std']}." if s3.get('calibration') and s3['calibration'].get('null_mean') is not None else "."), "",

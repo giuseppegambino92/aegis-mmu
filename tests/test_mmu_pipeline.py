@@ -3,12 +3,12 @@ import json
 
 import pytest
 
-from aegis_mmu.demo import agent_session_requests, catn
+from aegis_mmu.demo import agent_session_requests
 from aegis_mmu.mmu.allocator import allocate, compute_budget
 from aegis_mmu.mmu.ast_mipmapper import mipmap_file, syntax_ok
 from aegis_mmu.mmu.kv_paginator import PageRequest, SemanticPager, render_context
 from aegis_mmu.mmu.prompt_codec import prompt_text
-from aegis_mmu.tokens import common_prefix_len, count_tokens
+from aegis_mmu.tokens import count_tokens
 
 from .conftest import DATASETS, SAMPLES
 
@@ -82,7 +82,7 @@ def test_budget_policy(settings):
 
 def test_semantic_pager_is_append_only(store):
     pager = SemanticPager(store)
-    r1 = pager.page("s", [PageRequest("file:a", 2, "skeleton A", "skeleton", "a"), PageRequest("u1", 1, "u1 L1", "leaf", "a", 3)], 1000)
+    pager.page("s", [PageRequest("file:a", 2, "skeleton A", "skeleton", "a"), PageRequest("u1", 1, "u1 L1", "leaf", "a", 3)], 1000)
     r2 = pager.page("s", [PageRequest("file:a", 2, "skeleton A", "skeleton", "a"), PageRequest("u1", 1, "u1 L1", "leaf", "a", 3)], 1000)
     assert r2.kv_hit_rate == pytest.approx(1.0) and r2.appended == []
     # promotion u1 L1 -> L0, degraded request for file:a (L3) keeps the resident L2 page in place
@@ -108,7 +108,7 @@ def test_compaction_never_touches_the_pinned_prefix(store):
     budget = 100
     base = [PageRequest(f"s{i}", 2, f"skeleton {i} " + "w " * 18, "skeleton", f"f{i}") for i in range(6)]
     r1 = pager.page("p", base, budget)
-    r2 = pager.page("p", base + [PageRequest("u1", 0, "leaf one " + "x " * 30, "leaf")], budget)
+    pager.page("p", base + [PageRequest("u1", 0, "leaf one " + "x " * 30, "leaf")], budget)
     r3 = pager.page("p", base + [PageRequest("u2", 0, "leaf two " + "y " * 40, "leaf")], budget)
     assert r3.compacted and r3.epoch == r1.epoch
     pinned = [p for p in r3.pages if p.turn == 1]

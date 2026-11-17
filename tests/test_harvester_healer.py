@@ -2,7 +2,6 @@ import asyncio
 import copy
 import json
 import os
-import time
 
 import httpx
 import numpy as np

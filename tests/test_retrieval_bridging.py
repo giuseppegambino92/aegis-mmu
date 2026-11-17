@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 
-from aegis_mmu.config import AegisSettings
 from aegis_mmu.db.store import AegisStore
 from aegis_mmu.embeddings.lexicon import concepts_of, expand_term
 from aegis_mmu.embeddings.providers import FastLocalEngine

@@ -24,7 +24,6 @@ are parsed by a string/comment-aware brace lexer plus a declaration state machin
 from __future__ import annotations
 
 import ast
-import copy
 import hashlib
 import re
 import textwrap
@@ -728,7 +727,6 @@ class _PythonMipmapper:
             if e - s + 1 <= 6:
                 l1_parts.append(text)
             else:
-                saved = int(self.P[e] - self.P[s - 1])
                 l1_parts.append((short or f"{ind}...") + "  # [~aegis:{VID}~]")
             if short:
                 l2_parts.append(short)
