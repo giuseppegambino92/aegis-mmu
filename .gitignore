@@ -7,3 +7,6 @@ __pycache__/
 *.db-shm
 evals/.cache/
 .DS_Store
+.ruff_cache/
+build/
+dist/
